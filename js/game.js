@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
 // Game logic will go here
 console.log('Ad Whacker game initialized');
 
@@ -139,4 +140,5 @@ class AdWhacker {
 }
 
 // Initialize the game
-const game = new AdWhacker(); 
+const game = new AdWhacker();
+}); 
