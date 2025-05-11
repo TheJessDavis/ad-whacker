@@ -11,6 +11,7 @@ class AdWhacker {
         this.adInterval = null;
         this.timerInterval = null;
         this.activeAds = new Set();
+        this.streak = 0;  // Track consecutive ad whacks
 
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
@@ -46,6 +47,7 @@ class AdWhacker {
         this.score = 0;
         this.timeLeft = 30;
         this.gameActive = false;
+        this.streak = 0;
         this.scoreElement.textContent = '0';
         this.timerElement.textContent = '30';
         this.gameArea.innerHTML = '';
@@ -121,6 +123,8 @@ class AdWhacker {
     disappearAd(ad) {
         if (this.activeAds.has(ad)) {
             ad.classList.add('disappearing');
+            // Reset streak when ad disappears without being clicked
+            this.streak = 0;
             // Remove the ad after the animation completes
             setTimeout(() => {
                 if (this.activeAds.has(ad)) {
@@ -135,10 +139,39 @@ class AdWhacker {
         if (this.activeAds.has(ad)) {
             this.activeAds.delete(ad);
             ad.remove();
-            this.score += 10;
+            
+            // Update streak and score
+            this.streak++;
+            let points = 1; // Base point for whacking an ad
+            
+            // Check for streak bonus
+            if (this.streak >= 10) {
+                points += 1; // Extra point for 10+ streak
+                this.showStreakBonus();
+            }
+            
+            this.score += points;
             this.scoreElement.textContent = this.score;
-            console.log('Ad closed! Score:', this.score);
+            console.log('Ad closed! Score:', this.score, 'Streak:', this.streak);
         }
+    }
+
+    showStreakBonus() {
+        const bonus = document.createElement('div');
+        bonus.className = 'streak-bonus';
+        bonus.textContent = '+1 STREAK BONUS!';
+        bonus.style.position = 'absolute';
+        bonus.style.top = '50%';
+        bonus.style.left = '50%';
+        bonus.style.transform = 'translate(-50%, -50%)';
+        bonus.style.color = '#ff0';
+        bonus.style.fontSize = '24px';
+        bonus.style.textShadow = '2px 2px #f00';
+        bonus.style.animation = 'bonus-pop 0.5s ease-out forwards';
+        this.gameArea.appendChild(bonus);
+        
+        // Remove the bonus message after animation
+        setTimeout(() => bonus.remove(), 500);
     }
 
     updateTimer() {
