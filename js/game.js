@@ -35,8 +35,8 @@ class AdWhacker {
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
         
-        // Start spawning ads
-        this.adInterval = setInterval(() => this.spawnAd(), 1000);
+        // Start spawning ads more frequently (every 500ms instead of 1000ms)
+        this.adInterval = setInterval(() => this.spawnAd(), 500);
         
         // Start timer
         this.timerInterval = setInterval(() => this.updateTimer(), 1000);
@@ -78,7 +78,11 @@ class AdWhacker {
             'DOWNLOAD NOW!',
             'CONGRATULATIONS!',
             'SPECIAL OFFER!',
-            'CLICK FOR FREE GAMES!'
+            'CLICK FOR FREE GAMES!',
+            'FREE SCREENSAVER!',
+            'YOU\'RE THE 1,000,000TH VISITOR!',
+            'CLICK TO CLAIM YOUR PRIZE!',
+            'FREE WALLPAPER DOWNLOAD!'
         ];
 
         const closeButton = document.createElement('div');
@@ -105,12 +109,12 @@ class AdWhacker {
         this.gameArea.appendChild(ad);
         this.activeAds.add(ad);
 
-        // Auto-remove ad after 3 seconds if not closed
+        // Auto-remove ad after 5 seconds if not closed (increased from 3 seconds)
         setTimeout(() => {
             if (this.activeAds.has(ad)) {
                 this.closeAd(ad);
             }
-        }, 3000);
+        }, 5000);
     }
 
     closeAd(ad) {

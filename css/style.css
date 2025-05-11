@@ -12,8 +12,9 @@ body {
     color: #fff;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    padding: 20px;
 }
 
 .game-container {
@@ -23,6 +24,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
     image-rendering: pixelated;
+    margin-top: 20px;
 }
 
 .game-header {
@@ -154,12 +156,8 @@ body {
     animation: title-glow 2s infinite alternate, title-rainbow 6s linear infinite;
     position: relative;
     z-index: 10;
-    border: 4px solid #00ffff;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    display: block;
     transform: rotate(-2deg);
 }
 
