@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+alert('Script loaded!');
 // Game logic will go here
 console.log('Ad Whacker game initialized');
 
@@ -22,6 +23,7 @@ class AdWhacker {
     }
 
     startGame() {
+        alert('Start button clicked!');
         this.resetGame();
         this.gameActive = true;
         this.startButton.style.display = 'none';
