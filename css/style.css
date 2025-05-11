@@ -102,18 +102,41 @@ body {
 
 .game-title {
     font-family: 'Press Start 2P', cursive;
-    font-size: 36px;
+    font-size: 64px;
     color: #ff00cc;
     text-shadow:
-        2px 2px 0 #00ffff,
-        4px 4px 0 #ffff00,
-        6px 6px 0 #0000ff;
+        4px 4px 0 #00ffff,
+        8px 8px 0 #ffff00,
+        12px 12px 0 #0000ff,
+        0 0 24px #fff700,
+        0 0 48px #ff00cc;
     text-align: center;
-    margin-bottom: 30px;
-    letter-spacing: 2px;
+    margin-bottom: 40px;
+    letter-spacing: 4px;
     background: linear-gradient(90deg, #ff00cc 0%, #00ffff 50%, #ffff00 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 8px #fff700);
+    filter: drop-shadow(0 0 16px #fff700);
+    animation: title-glow 2s infinite alternate, title-rainbow 6s linear infinite;
+    position: relative;
+    z-index: 10;
+}
+
+@keyframes title-glow {
+    0% {
+        filter: drop-shadow(0 0 16px #fff700) drop-shadow(0 0 8px #ff00cc);
+    }
+    100% {
+        filter: drop-shadow(0 0 32px #00ffff) drop-shadow(0 0 24px #ffff00);
+    }
+}
+
+@keyframes title-rainbow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
 } 
