@@ -109,12 +109,26 @@ class AdWhacker {
         this.gameArea.appendChild(ad);
         this.activeAds.add(ad);
 
-        // Auto-remove ad after 5 seconds if not closed (increased from 3 seconds)
+        // Random disappearance time between 1 and 4 seconds
+        const disappearTime = Math.random() * 3000 + 1000; // Random time between 1-4 seconds
         setTimeout(() => {
             if (this.activeAds.has(ad)) {
-                this.closeAd(ad);
+                this.disappearAd(ad);
             }
-        }, 5000);
+        }, disappearTime);
+    }
+
+    disappearAd(ad) {
+        if (this.activeAds.has(ad)) {
+            ad.classList.add('disappearing');
+            // Remove the ad after the animation completes
+            setTimeout(() => {
+                if (this.activeAds.has(ad)) {
+                    this.activeAds.delete(ad);
+                    ad.remove();
+                }
+            }, 500); // Match this with the CSS animation duration
+        }
     }
 
     closeAd(ad) {
