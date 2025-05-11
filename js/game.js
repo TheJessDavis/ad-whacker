@@ -93,6 +93,13 @@ class AdWhacker {
         adContent.className = 'ad-content';
         adContent.textContent = adTemplates[Math.floor(Math.random() * adTemplates.length)];
 
+        // Make the entire ad clickable
+        ad.addEventListener('click', (e) => {
+            if (e.target === ad || e.target === adContent) {
+                this.closeAd(ad);
+            }
+        });
+
         ad.appendChild(closeButton);
         ad.appendChild(adContent);
         this.gameArea.appendChild(ad);
