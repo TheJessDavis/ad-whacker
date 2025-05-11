@@ -25,6 +25,13 @@ class AdWhacker {
         this.resetGame();
         this.gameActive = true;
         this.startButton.style.display = 'none';
+        this.scoreElement.textContent = this.score;
+        this.timerElement.textContent = this.timeLeft;
+        console.log('Game started!');
+
+        // Always clear intervals before setting new ones
+        if (this.adInterval) clearInterval(this.adInterval);
+        if (this.timerInterval) clearInterval(this.timerInterval);
         
         // Start spawning ads
         this.adInterval = setInterval(() => this.spawnAd(), 1000);
@@ -44,10 +51,12 @@ class AdWhacker {
         
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
+        console.log('Game reset!');
     }
 
     spawnAd() {
         if (!this.gameActive) return;
+        console.log('Spawning ad!');
 
         const ad = document.createElement('div');
         ad.className = 'ad-popup';
@@ -101,12 +110,14 @@ class AdWhacker {
             ad.remove();
             this.score += 10;
             this.scoreElement.textContent = this.score;
+            console.log('Ad closed! Score:', this.score);
         }
     }
 
     updateTimer() {
         this.timeLeft--;
         this.timerElement.textContent = this.timeLeft;
+        console.log('Timer:', this.timeLeft);
 
         if (this.timeLeft <= 0) {
             this.endGame();
@@ -136,6 +147,7 @@ class AdWhacker {
 
         // Show start button again
         this.startButton.style.display = 'block';
+        console.log('Game over! Final Score:', this.score);
     }
 }
 
