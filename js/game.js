@@ -8,6 +8,7 @@ const LEADERBOARD_BIN_KEY = ''; // If you create a private bin, add your X-Maste
 
 class AdWhacker {
     constructor() {
+        console.log('Initializing AdWhacker...');
         this.score = 0;
         this.timeLeft = 30;
         this.gameActive = false;
@@ -17,11 +18,16 @@ class AdWhacker {
         this.comboCount = 0;
         this.lastBlockTimestamp = 0;
         this.comboActive = false;
+        this.lastBlockedAd = null;
         // Sound effects
         this.popSound = new Audio('sounds/imrcv.wav');
         this.popSound.volume = 1.0;
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
+        if (!this.gameArea) {
+            console.error('Game area element not found!');
+            return;
+        }
         this.scoreElement = document.getElementById('score');
         if (!this.scoreElement) {
             console.error('Score element not found by ID!');
@@ -30,29 +36,62 @@ class AdWhacker {
             console.log('Fallback: scoreElement found?', !!this.scoreElement);
             if (!this.scoreElement) {
                 console.error('Score element not found by querySelector either!');
+                return;
             }
-        } else {
-            console.log('Score element found successfully');
         }
+        console.log('Score element found successfully:', this.scoreElement);
         this.timerElement = document.getElementById('timer');
+        if (!this.timerElement) {
+            console.error('Timer element not found!');
+            return;
+        }
         this.startButton = document.getElementById('startButton');
+        if (!this.startButton) {
+            console.error('Start button not found!');
+            return;
+        }
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
         this.frameBuffer = [];
         this.frameInterval = null;
+        
+        // Initialize score display
+        this.updateScoreDisplay(0);
+        console.log('AdWhacker initialization complete');
+    }
+
+    updateScoreDisplay(newScore) {
+        if (!this.scoreElement) {
+            console.error('Score element not found during score update!');
+            return;
+        }
+        const oldText = this.scoreElement.textContent;
+        this.scoreElement.textContent = newScore.toString();
+        console.log('Score display updated:', {
+            oldText,
+            newText: this.scoreElement.textContent,
+            newScore,
+            element: this.scoreElement,
+            elementId: this.scoreElement.id,
+            elementParent: this.scoreElement.parentElement
+        });
+        
+        // Force a DOM update
+        this.scoreElement.style.display = 'none';
+        this.scoreElement.offsetHeight; // Force reflow
+        this.scoreElement.style.display = '';
     }
 
     startGame() {
         console.log('Starting game...');
-        this.resetGame();
-        this.gameActive = true;
-        this.startButton.style.display = 'none';
-        if (this.scoreElement) {
-            this.scoreElement.textContent = '0';
-            console.log('Score element initialized to 0');
-        } else {
-            console.error('Score element not found during game start!');
+        if (this.gameActive) {
+            console.log('Game already active, resetting first');
+            this.resetGame();
         }
+        this.gameActive = true;
+        console.log('Game state set to active:', this.gameActive);
+        this.startButton.style.display = 'none';
+        this.updateScoreDisplay(0);
         this.timerElement.textContent = this.timeLeft;
         this.lastBlockTimestamp = 0;
         this.comboCount = 0;
@@ -66,7 +105,10 @@ class AdWhacker {
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.adInterval = setInterval(() => this.spawnAd(), 500);
         this.timerInterval = setInterval(() => this.updateTimer(), 1000);
-        console.log('Game started successfully');
+        console.log('Game started successfully, intervals set:', {
+            adInterval: !!this.adInterval,
+            timerInterval: !!this.timerInterval
+        });
     }
 
     resetGame() {
@@ -76,23 +118,29 @@ class AdWhacker {
         this.gameActive = false;
         this.comboCount = 0;
         this.comboActive = false;
-        if (this.scoreElement) {
-            this.scoreElement.textContent = '0';
-            console.log('Score reset to 0');
-        } else {
-            console.error('Score element not found during reset!');
-        }
+        this.updateScoreDisplay(0);
         this.timerElement.textContent = '30';
         this.gameArea.innerHTML = '';
         this.activeAds.clear();
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
-        console.log('Game reset complete');
+        console.log('Game reset complete, state:', {
+            score: this.score,
+            gameActive: this.gameActive,
+            activeAds: this.activeAds.size
+        });
     }
 
     spawnAd() {
-        if (!this.gameActive) return;
-        console.log('Spawning ad!');
+        if (!this.gameActive) {
+            console.log('Game not active, skipping ad spawn');
+            return;
+        }
+        console.log('Spawning ad! Game state:', {
+            gameActive: this.gameActive,
+            score: this.score,
+            activeAds: this.activeAds.size
+        });
         // --- 20 Unique Ad style templates ---
         const adStyles = [
             // 1. Congratulations banner with checklist and starburst
@@ -567,12 +615,16 @@ class AdWhacker {
         const top = Math.floor(Math.random() * (maxY + 1));
         ad.style.left = `${left}px`;
         ad.style.top = `${top}px`;
-        // Make the entire ad clickable (except the close button)
-        ad.addEventListener('click', (e) => {
+        
+        // Bind click handler to the ad
+        const clickHandler = (e) => {
             if (!e.target.classList.contains('close-button')) {
+                console.log('Ad clicked, calling closeAd');
                 this.closeAd(ad);
             }
-        });
+        };
+        ad.addEventListener('click', clickHandler);
+        
         this.gameArea.appendChild(ad);
         this.activeAds.add(ad);
         // Random disappearance time between 1 and 4 seconds
@@ -600,78 +652,78 @@ class AdWhacker {
     }
 
     closeAd(ad) {
-        if (this.activeAds.has(ad)) {
-            console.log('Closing ad...');
-            // Play pop sound
-            this.popSound.currentTime = 0;
-            this.popSound.play().catch(e => console.log('Sound play failed:', e));
-            
-            // Get ad position for star trail
-            const adRect = ad.getBoundingClientRect();
-            const gameRect = this.gameArea.getBoundingClientRect();
-            const adCenterX = adRect.left + adRect.width / 2 - gameRect.left;
-            const adCenterY = adRect.top + adRect.height / 2 - gameRect.top;
-            
-            // Remove ad first
-            this.disappearAd(ad);
-            
-            // Combo logic
-            const now = performance.now();
-            let elapsed = now - (this.lastBlockTimestamp || now);
-            let window = 1500; // fixed window
-            
-            // Prevent double-clicks
-            if (elapsed < 50) {
-                console.log('Double click prevented');
-                return;
-            }
-            
-            // Update combo state
-            let comboContinues = false;
-            if (!this.comboActive || elapsed > window) {
-                this.comboCount = 1;
-                this.comboActive = true;
-                console.log('New combo started');
-            } else {
-                this.comboCount++;
-                comboContinues = true;
-                console.log('Combo continued:', this.comboCount);
-            }
-            this.lastBlockTimestamp = now;
-            
-            // Scoring: +1 per ad, +10 every 5th in a row
-            let pointsEarned = 1;
-            if (this.comboCount % 5 === 0) {
-                pointsEarned += 10;
-                this.showComboPopup(adCenterX, adCenterY);
-                console.log('Combo bonus! +10 points');
-            }
-            
-            // Update score
-            const oldScore = this.score;
-            this.score += pointsEarned;
-            console.log('Score updated:', {
-                oldScore,
-                pointsEarned,
-                newScore: this.score,
-                comboCount: this.comboCount
-            });
-            
-            // Update score display
-            if (this.scoreElement) {
-                const oldText = this.scoreElement.textContent;
-                this.scoreElement.textContent = this.score.toString();
-                console.log('Score display updated:', {
-                    oldText,
-                    newText: this.scoreElement.textContent
-                });
-            } else {
-                console.error('Score element not found during score update!');
-            }
-            
-            // Visual feedback
-            this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
+        if (!this.gameActive) {
+            console.log('Game not active, ignoring ad close');
+            return;
         }
+        if (!this.activeAds.has(ad)) {
+            console.log('Ad not in active ads set, ignoring close');
+            return;
+        }
+        
+        console.log('Closing ad...');
+        // Play pop sound
+        this.popSound.currentTime = 0;
+        this.popSound.play().catch(e => console.log('Sound play failed:', e));
+        
+        // Get ad position for star trail
+        const adRect = ad.getBoundingClientRect();
+        const gameRect = this.gameArea.getBoundingClientRect();
+        const adCenterX = adRect.left + adRect.width / 2 - gameRect.left;
+        const adCenterY = adRect.top + adRect.height / 2 - gameRect.top;
+        
+        // Remove ad first
+        this.disappearAd(ad);
+        
+        // Combo logic
+        const now = performance.now();
+        const elapsed = this.lastBlockTimestamp ? now - this.lastBlockTimestamp : 0;
+        const window = 1500; // fixed window
+        
+        // Prevent double-clicks - only if clicking the same ad
+        if (elapsed < 50 && this.lastBlockedAd === ad) {
+            console.log('Double click prevented on same ad');
+            return;
+        }
+        this.lastBlockedAd = ad;
+        
+        // Update combo state
+        let comboContinues = false;
+        if (!this.comboActive || elapsed > window) {
+            this.comboCount = 1;
+            this.comboActive = true;
+            console.log('New combo started');
+        } else {
+            this.comboCount++;
+            comboContinues = true;
+            console.log('Combo continued:', this.comboCount);
+        }
+        this.lastBlockTimestamp = now;
+        
+        // Scoring: +1 per ad, +10 every 5th in a row
+        let pointsEarned = 1;
+        if (this.comboCount % 5 === 0) {
+            pointsEarned += 10;
+            this.showComboPopup(adCenterX, adCenterY);
+            console.log('Combo bonus! +10 points');
+        }
+        
+        // Update score
+        const oldScore = this.score;
+        this.score += pointsEarned;
+        console.log('Score updated:', {
+            oldScore,
+            pointsEarned,
+            newScore: this.score,
+            comboCount: this.comboCount,
+            gameActive: this.gameActive
+        });
+        
+        // Update score display
+        this.updateScoreDisplay(this.score);
+        
+        // Visual feedback
+        this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
     }
 
     spawnStarTrail(x, y, comboContinues) {
