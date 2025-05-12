@@ -24,9 +24,15 @@ class AdWhacker {
         this.gameArea = document.getElementById('gameArea');
         this.scoreElement = document.getElementById('score');
         if (!this.scoreElement) {
+            console.error('Score element not found by ID!');
             // fallback: try querySelector
             this.scoreElement = document.querySelector('#score');
             console.log('Fallback: scoreElement found?', !!this.scoreElement);
+            if (!this.scoreElement) {
+                console.error('Score element not found by querySelector either!');
+            }
+        } else {
+            console.log('Score element found successfully');
         }
         this.timerElement = document.getElementById('timer');
         this.startButton = document.getElementById('startButton');
@@ -37,10 +43,16 @@ class AdWhacker {
     }
 
     startGame() {
+        console.log('Starting game...');
         this.resetGame();
         this.gameActive = true;
         this.startButton.style.display = 'none';
-        this.scoreElement.textContent = this.score;
+        if (this.scoreElement) {
+            this.scoreElement.textContent = '0';
+            console.log('Score element initialized to 0');
+        } else {
+            console.error('Score element not found during game start!');
+        }
         this.timerElement.textContent = this.timeLeft;
         this.lastBlockTimestamp = 0;
         this.comboCount = 0;
@@ -54,20 +66,28 @@ class AdWhacker {
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.adInterval = setInterval(() => this.spawnAd(), 500);
         this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+        console.log('Game started successfully');
     }
 
     resetGame() {
+        console.log('Resetting game...');
         this.score = 0;
         this.timeLeft = 30;
         this.gameActive = false;
         this.comboCount = 0;
         this.comboActive = false;
-        this.scoreElement.textContent = '0';
+        if (this.scoreElement) {
+            this.scoreElement.textContent = '0';
+            console.log('Score reset to 0');
+        } else {
+            console.error('Score element not found during reset!');
+        }
         this.timerElement.textContent = '30';
         this.gameArea.innerHTML = '';
         this.activeAds.clear();
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
+        console.log('Game reset complete');
     }
 
     spawnAd() {
@@ -581,6 +601,7 @@ class AdWhacker {
 
     closeAd(ad) {
         if (this.activeAds.has(ad)) {
+            console.log('Closing ad...');
             // Play pop sound
             this.popSound.currentTime = 0;
             this.popSound.play().catch(e => console.log('Sound play failed:', e));
@@ -600,16 +621,21 @@ class AdWhacker {
             let window = 1500; // fixed window
             
             // Prevent double-clicks
-            if (elapsed < 50) return;
+            if (elapsed < 50) {
+                console.log('Double click prevented');
+                return;
+            }
             
             // Update combo state
             let comboContinues = false;
             if (!this.comboActive || elapsed > window) {
                 this.comboCount = 1;
                 this.comboActive = true;
+                console.log('New combo started');
             } else {
                 this.comboCount++;
                 comboContinues = true;
+                console.log('Combo continued:', this.comboCount);
             }
             this.lastBlockTimestamp = now;
             
@@ -618,18 +644,29 @@ class AdWhacker {
             if (this.comboCount % 5 === 0) {
                 pointsEarned += 10;
                 this.showComboPopup(adCenterX, adCenterY);
+                console.log('Combo bonus! +10 points');
             }
             
             // Update score
+            const oldScore = this.score;
             this.score += pointsEarned;
-            console.log('Score updated:', this.score, 'Points earned:', pointsEarned, 'Combo count:', this.comboCount);
+            console.log('Score updated:', {
+                oldScore,
+                pointsEarned,
+                newScore: this.score,
+                comboCount: this.comboCount
+            });
             
             // Update score display
             if (this.scoreElement) {
+                const oldText = this.scoreElement.textContent;
                 this.scoreElement.textContent = this.score.toString();
-                console.log('Score element updated with:', this.score);
+                console.log('Score display updated:', {
+                    oldText,
+                    newText: this.scoreElement.textContent
+                });
             } else {
-                console.error('Score element not found!');
+                console.error('Score element not found during score update!');
             }
             
             // Visual feedback
