@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Game logic will go here
 console.log('Ad Whacker game initialized');
 
+// Leaderboard config
+const LEADERBOARD_BIN_URL = 'https://api.jsonbin.io/v3/b/665e2e3dacd3cb34a84e7b2d'; // <-- Replace with your own bin later
+const LEADERBOARD_BIN_KEY = ''; // If you create a private bin, add your X-Master-Key here
+
 class AdWhacker {
     constructor() {
         this.score = 0;
@@ -109,7 +113,6 @@ class AdWhacker {
     spawnAd() {
         if (!this.gameActive) return;
         console.log('Spawning ad!');
-
         // --- 20 Unique Ad style templates ---
         const adStyles = [
             // 1. Congratulations banner with checklist and starburst
@@ -568,28 +571,30 @@ class AdWhacker {
                 return ad;
             }
         ];
-
         // Pick a random ad style
         const ad = adStyles[Math.floor(Math.random() * adStyles.length)]();
-
-        // Random position within game area
-        const maxX = Math.max(0, this.gameArea.clientWidth - ad.offsetWidth);
-        const maxY = Math.max(0, this.gameArea.clientHeight - ad.offsetHeight);
+        // Temporarily add ad to DOM (hidden) to measure size
+        ad.style.visibility = 'hidden';
+        this.gameArea.appendChild(ad);
+        const adWidth = ad.offsetWidth;
+        const adHeight = ad.offsetHeight;
+        this.gameArea.removeChild(ad);
+        ad.style.visibility = '';
+        // Random position within game area, clamped to fit
+        const maxX = Math.max(0, this.gameArea.clientWidth - adWidth);
+        const maxY = Math.max(0, this.gameArea.clientHeight - adHeight);
         const left = Math.floor(Math.random() * (maxX + 1));
         const top = Math.floor(Math.random() * (maxY + 1));
         ad.style.left = `${left}px`;
         ad.style.top = `${top}px`;
-
         // Make the entire ad clickable (except the close button)
         ad.addEventListener('click', (e) => {
             if (!e.target.classList.contains('close-button')) {
                 this.closeAd(ad);
             }
         });
-
         this.gameArea.appendChild(ad);
         this.activeAds.add(ad);
-
         // Random disappearance time between 1 and 4 seconds
         const disappearTime = Math.random() * 3000 + 1000; // Random time between 1-4 seconds
         setTimeout(() => {
@@ -828,7 +833,71 @@ class AdWhacker {
 
         // Show start button again
         this.startButton.style.display = 'block';
+        // Show leaderboard after a short delay
+        setTimeout(() => this.showLeaderboardModal(), 1200);
         console.log('Game over! Final Score:', this.score);
+    }
+
+    // Leaderboard modal logic
+    showLeaderboardModal() {
+        const modal = document.getElementById('leaderboardModal');
+        const closeBtn = document.getElementById('leaderboardClose');
+        const tableBody = document.querySelector('#leaderboardTable tbody');
+        const initialsForm = document.getElementById('initialsForm');
+        const initialsInput = document.getElementById('initialsInput');
+        modal.style.display = 'flex';
+        closeBtn.onclick = () => { modal.style.display = 'none'; };
+        window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+        initialsForm.style.display = 'none';
+        initialsInput.value = '';
+        // Fetch leaderboard
+        fetch(LEADERBOARD_BIN_URL, { headers: LEADERBOARD_BIN_KEY ? { 'X-Master-Key': LEADERBOARD_BIN_KEY } : {} })
+          .then(res => res.json())
+          .then(data => {
+            let scores = data.record || data || [];
+            // Add current score if qualifies
+            let qualifies = (scores.length < 10) || scores.some(entry => this.score > entry.score);
+            // Sort descending
+            scores = scores.sort((a, b) => b.score - a.score || new Date(a.date) - new Date(b.date));
+            // Show table
+            tableBody.innerHTML = '';
+            scores.slice(0, 10).forEach((entry, i) => {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `<td>${i+1}</td><td>${entry.initials}</td><td>${entry.score}</td><td>${entry.date}</td>`;
+              tableBody.appendChild(tr);
+            });
+            // If user qualifies, show initials form
+            if (qualifies && this.score > 0) {
+              initialsForm.style.display = 'block';
+              initialsForm.onsubmit = (e) => {
+                e.preventDefault();
+                const initials = initialsInput.value.toUpperCase().slice(0,3);
+                const date = new Date().toISOString().slice(0,10);
+                const newEntry = { initials, score: this.score, date };
+                // Add and sort
+                scores.push(newEntry);
+                scores = scores.sort((a, b) => b.score - a.score || new Date(a.date) - new Date(b.date)).slice(0, 10);
+                // Update table
+                tableBody.innerHTML = '';
+                scores.forEach((entry, i) => {
+                  const tr = document.createElement('tr');
+                  tr.innerHTML = `<td>${i+1}</td><td>${entry.initials}</td><td>${entry.score}</td><td>${entry.date}</td>`;
+                  tableBody.appendChild(tr);
+                });
+                // Save to bin
+                fetch(LEADERBOARD_BIN_URL, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    ...(LEADERBOARD_BIN_KEY ? { 'X-Master-Key': LEADERBOARD_BIN_KEY } : {})
+                  },
+                  body: JSON.stringify(scores)
+                }).then(() => {
+                  initialsForm.style.display = 'none';
+                });
+              };
+            }
+          });
     }
 }
 

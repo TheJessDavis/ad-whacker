@@ -850,4 +850,80 @@ body {
     color: #ff00de !important;
     box-shadow: 0 0 32px #ffe066, 0 0 32px #00e6ff !important;
     transition: background 0.15s, color 0.15s, box-shadow 0.15s !important;
+}
+
+.leaderboard-modal {
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', cursive;
+}
+.leaderboard-content {
+    background: #fffbe0;
+    color: #222;
+    border: 4px solid #001a66;
+    border-radius: 12px;
+    box-shadow: 0 0 32px #001a66, 0 0 8px #ffe066;
+    padding: 32px 32px 24px 32px;
+    min-width: 420px;
+    max-width: 90vw;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+}
+.leaderboard-close {
+    position: absolute;
+    top: 12px; right: 18px;
+    font-size: 32px;
+    color: #ff00de;
+    cursor: pointer;
+    font-family: inherit;
+    z-index: 10;
+}
+#leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 12px 0;
+    font-size: 18px;
+}
+#leaderboardTable th, #leaderboardTable td {
+    border: 2px solid #ffe066;
+    padding: 6px 10px;
+    text-align: center;
+}
+#leaderboardTable th {
+    background: #ffe066;
+    color: #001a66;
+}
+#leaderboardTable tr:nth-child(even) {
+    background: #fff;
+}
+#initialsForm {
+    margin-top: 18px;
+}
+#initialsInput {
+    font-size: 22px;
+    font-family: 'Press Start 2P', cursive;
+    width: 60px;
+    text-align: center;
+    margin: 0 8px;
+    border: 2px solid #001a66;
+    border-radius: 6px;
+    background: #fff;
+    color: #001a66;
+}
+#initialsForm button {
+    font-size: 18px;
+    font-family: 'Press Start 2P', cursive;
+    background: #ffe066;
+    color: #001a66;
+    border: 2px solid #001a66;
+    border-radius: 6px;
+    padding: 4px 18px;
+    cursor: pointer;
+    margin-left: 8px;
 } 
