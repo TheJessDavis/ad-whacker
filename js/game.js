@@ -95,7 +95,7 @@ class AdWhacker {
                     <br><a href='#' class='ad-underline'>Click Here to Claim Your FREE* Desktop Computer!</a>
                 `;
                 ad.appendChild(content);
-                // Add close button
+                // Add close button directly to ad
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
@@ -112,17 +112,17 @@ class AdWhacker {
                 const info = document.createElement('div');
                 info.className = 'ad-info-bar';
                 info.textContent = 'Before you go, did you know...';
-                // Add close button to info bar
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-button';
-                closeBtn.textContent = 'X';
-                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                info.appendChild(closeBtn);
                 ad.appendChild(info);
                 const content = document.createElement('div');
                 content.className = 'ad-content blue';
                 content.innerHTML = `You can add <b>AOL</b> for Broadband to any high-speed cable or DSL connection!<br><span class='ad-badge'>GET A FREE TRIAL!</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 3. Red sweepstakes with product image
@@ -134,17 +134,17 @@ class AdWhacker {
                 const header = document.createElement('div');
                 header.className = 'ad-red-header';
                 header.textContent = 'Enter to WIN → XEROX';
-                // Add close button to header
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-button';
-                closeBtn.textContent = 'X';
-                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                header.appendChild(closeBtn);
                 ad.appendChild(header);
                 const content = document.createElement('div');
                 content.className = 'ad-content';
                 content.innerHTML = `WIN an $11,000 Business Upgrade Package!<br><img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/2/2e/Xerox_Phaser_8400.jpg' alt='Xerox' onerror="this.style.display='none'"><br><span class='ad-fake-btn'>Enter Now</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 4. Green/yellow "What's New" browser window
@@ -156,12 +156,6 @@ class AdWhacker {
                 const chrome = document.createElement('div');
                 chrome.className = 'ad-browser-chrome';
                 chrome.innerHTML = `<span class='ad-browser-url'>Netscape What's New</span>`;
-                // Add close button to chrome
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-button';
-                closeBtn.textContent = 'X';
-                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                chrome.appendChild(closeBtn);
                 ad.appendChild(chrome);
                 const header = document.createElement('div');
                 header.className = 'ad-green-header';
@@ -171,6 +165,12 @@ class AdWhacker {
                 content.className = 'ad-content green';
                 content.innerHTML = `<ul class='ad-checklist'><li>Science Proves: Drinking Causes...</li><li>Strange Deep Budget Mystery</li><li>Dog Saves Owner from Email</li></ul><span class='ad-fake-btn'>Read More</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 5. Orange "Are You Paying Too Much?" banner
@@ -187,6 +187,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/6/6b/Dollar_bill_house_2.jpg' alt='Money House' onerror="this.style.display='none'"><br>Rates are at historic lows!<br><span class='ad-fake-btn'>Get Quote</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 6. Travel ad with blue header and newsletter signup
@@ -203,6 +209,12 @@ class AdWhacker {
                 content.className = 'ad-content yellow';
                 content.innerHTML = `The Top 20 Travel Deals on the Web!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn big'>Sign Up</span></div>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 7. Free test badge ad
@@ -219,6 +231,12 @@ class AdWhacker {
                 content.className = 'ad-content blue';
                 content.innerHTML = `Find out your personality type.<br><span class='ad-fake-btn'>Start</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 8. Multi-column ad with icons
@@ -231,6 +249,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<div class='ad-multicol'><div class='ad-col'><span class='ad-icon'>💡</span> Save on bills!<br><span class='ad-icon'>🚗</span> Car insurance</div><div class='ad-col'><span class='ad-icon'>🏠</span> Home loan<br><span class='ad-icon'>💳</span> Credit cards</div></div><span class='ad-fake-btn'>Compare</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 9. Red warning with exclamation and fake link
@@ -247,6 +271,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<span class='ad-underline'>Your PC is at risk!</span><br><span class='ad-fake-btn'>Scan Now</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 10. Blue info bar with checkmarks
@@ -263,6 +293,12 @@ class AdWhacker {
                 content.className = 'ad-content blue';
                 content.innerHTML = `<ul class='ad-checklist'><li>Tax Tips</li><li>Investing</li><li>Retirement</li></ul><span class='ad-fake-btn'>Download</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 11. Newsletter pop-up with green header
@@ -279,6 +315,12 @@ class AdWhacker {
                 content.className = 'ad-content green';
                 content.innerHTML = `Get weekly deals and tips!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Subscribe</span></div>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 12. Browser window with fake search bar
@@ -295,6 +337,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<div class='ad-input-row'><input class='ad-fake-input' placeholder='Search'><span class='ad-fake-btn'>Go</span></div><span class='ad-small'>Sponsored Results</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 13. Big "FREE!" badge and product image
@@ -311,6 +359,12 @@ class AdWhacker {
                 content.className = 'ad-content yellow';
                 content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/3/3a/Old_computer_icon.png' alt='Old Computer' onerror="this.style.display='none'"><br>Get your free screensaver!<br><span class='ad-fake-btn'>Download</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 14. "Special Offer" with orange banner and two buttons
@@ -327,6 +381,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `Upgrade now and save 70%!<br><span class='ad-fake-btn'>Upgrade</span><span class='ad-fake-btn'>No Thanks</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 15. "You've Won!" with big red header and input
@@ -343,6 +403,12 @@ class AdWhacker {
                 content.className = 'ad-content yellow';
                 content.innerHTML = `Enter your email to claim your prize!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Claim</span></div>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 16. "Risk-Free" blue info bar with badge
@@ -359,6 +425,12 @@ class AdWhacker {
                 content.className = 'ad-content blue';
                 content.innerHTML = `<span class='ad-badge'>15 Free Guides</span><br>Get your free trial today!`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 17. "Special Internet Offer" with green header and checkmarks
@@ -375,6 +447,12 @@ class AdWhacker {
                 content.className = 'ad-content green';
                 content.innerHTML = `<ul class='ad-checklist'><li>Unlimited Access</li><li>No Contracts</li><li>24/7 Support</li></ul><span class='ad-fake-btn'>Sign Up</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 18. "Newsletter" with multi-column layout
@@ -387,6 +465,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<div class='ad-multicol'><div class='ad-col'><b>Newsletter</b><br>Get deals weekly!</div><div class='ad-col'><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Subscribe</span></div></div></div>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 19. "Free Quote" with orange banner and image
@@ -403,6 +487,12 @@ class AdWhacker {
                 content.className = 'ad-content';
                 content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/6/6b/Dollar_bill_house_2.jpg' alt='Money House' onerror="this.style.display='none'"><br>See how much you could save!<br><span class='ad-fake-btn'>Get Quote</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             },
             // 20. "Special Bonus" with starburst and two buttons
@@ -419,6 +509,12 @@ class AdWhacker {
                 content.className = 'ad-content yellow';
                 content.innerHTML = `Get a special bonus with your order!<br><span class='ad-fake-btn'>Claim</span><span class='ad-fake-btn'>No Thanks</span>`;
                 ad.appendChild(content);
+                // Add close button directly to ad
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                ad.appendChild(closeBtn);
                 return ad;
             }
         ];
