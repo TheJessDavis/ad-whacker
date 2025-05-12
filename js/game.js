@@ -62,7 +62,48 @@ class AdWhacker {
 
         // --- Ad style templates ---
         const adStyles = [
-            // 1. Classic browser window with address bar, banner, and input
+            // 1. Congratulations banner with checklist and starburst
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '350px';
+                ad.style.height = '210px';
+
+                // Browser chrome
+                const chrome = document.createElement('div');
+                chrome.className = 'ad-browser-chrome';
+                chrome.innerHTML = `
+                    <span class='ad-browser-btn back'></span>
+                    <span class='ad-browser-btn fwd'></span>
+                    <span class='ad-browser-btn reload'></span>
+                    <span class='ad-browser-url'><span class='ad-browser-lock'>🔒</span>http://ads1.revenue.net</span>
+                `;
+                ad.appendChild(chrome);
+
+                // Big banner
+                const congrats = document.createElement('div');
+                congrats.className = 'ad-congrats-banner';
+                congrats.textContent = 'CONGRATULATIONS!';
+                ad.appendChild(congrats);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `
+                    <span style='color:#d60000;font-weight:bold;'>You've been chosen to receive a <span style='color:#222;'>FREE <b>Gateway Desktop Computer!</b></span></span><br>
+                    <ul class='ad-checklist'>
+                        <li>Intel Pentium 4 Processor 2.66 GHz</li>
+                        <li>256MB DDR-SDRAM, 80GB HD, 48x CD-RW</li>
+                        <li>19-inch Color CRT Monitor (18-inch viewable)</li>
+                    </ul>
+                    <span class='ad-starburst'>FREE!</span>
+                    <img class='ad-img-wide' src='https://upload.wikimedia.org/wikipedia/commons/4/4c/Gateway_2000_full_system.jpg' alt='Gateway Computer'>
+                    <br><a href='#' class='ad-underline'>Click Here to Claim Your FREE* Desktop Computer!</a>
+                `;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 2. Classic browser window with address bar, banner, and input
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
@@ -109,7 +150,7 @@ class AdWhacker {
                 ad.appendChild(content);
                 return ad;
             },
-            // 2. Ad with image, blue content, and fake button
+            // 3. Ad with image, blue content, and fake button
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
@@ -147,7 +188,7 @@ class AdWhacker {
                 ad.appendChild(content);
                 return ad;
             },
-            // 3. System alert with input and two buttons
+            // 4. System alert with input and two buttons
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
@@ -172,7 +213,7 @@ class AdWhacker {
                 ad.appendChild(content);
                 return ad;
             },
-            // 4. Classic pop-up with big red text and underline
+            // 5. Classic pop-up with big red text and underline
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';

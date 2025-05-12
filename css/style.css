@@ -547,4 +547,63 @@ body {
 .ad-content .ad-small {
     font-size: 11px;
     color: #666;
+}
+
+.ad-congrats-banner {
+    width: 100%;
+    background: linear-gradient(90deg, #ffecb3 0%, #fff 100%);
+    color: #d60000;
+    font-family: Impact, 'Arial Black', Arial, sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 6px 0 2px 0;
+    margin: 0 0 8px 0;
+    border-bottom: 3px dotted #d60000;
+    text-shadow: 2px 2px 0 #fff, 0 0 6px #ffb347;
+}
+
+.ad-starburst {
+    display: inline-block;
+    background: #ff0;
+    color: #d60000;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 2px 12px;
+    border-radius: 50% 50% 50% 50%/60% 60% 40% 40%;
+    box-shadow: 0 0 8px #ff0, 0 0 2px #d60000;
+    border: 2px solid #d60000;
+    margin: 0 6px;
+    transform: rotate(-8deg);
+    font-family: Impact, 'Arial Black', Arial, sans-serif;
+}
+
+.ad-checklist {
+    text-align: left;
+    margin: 8px 0 8px 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: #222;
+    font-family: Arial, sans-serif;
+}
+.ad-checklist li {
+    margin-bottom: 2px;
+    list-style: none;
+}
+.ad-checklist li:before {
+    content: '✔';
+    color: #4caf50;
+    margin-right: 6px;
+    font-size: 13px;
+}
+
+.ad-img-wide {
+    width: 90px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid #bcb9ad;
+    border-radius: 4px;
+    margin: 6px auto 6px auto;
+    display: block;
+    background: #fff;
 } 
