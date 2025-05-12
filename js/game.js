@@ -14,7 +14,7 @@ class AdWhacker {
 
         // Sound effects
         this.popSound = new Audio('sounds/pop.mp3');
-        this.popSound.volume = 0.5; // Set volume to 50%
+        this.popSound.volume = 0.8; // Set volume to 80%
 
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
