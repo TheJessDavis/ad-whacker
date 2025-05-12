@@ -443,4 +443,108 @@ body {
     text-transform: uppercase;
     pointer-events: none;
     z-index: 1000;
+}
+
+.ad-browser-chrome {
+    background: #e0e0e0;
+    border-bottom: 1.5px solid #bcb9ad;
+    display: flex;
+    align-items: center;
+    height: 26px;
+    padding: 0 8px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    border-radius: 6px 6px 0 0;
+}
+.ad-browser-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 4px;
+    background: #fff;
+    border: 1.5px solid #bcb9ad;
+    display: inline-block;
+}
+.ad-browser-btn.back { background: #b0c4de; }
+.ad-browser-btn.fwd { background: #b0c4de; }
+.ad-browser-btn.reload { background: #fffbe0; }
+.ad-browser-url {
+    background: #fff;
+    border: 1.5px solid #bcb9ad;
+    border-radius: 3px;
+    padding: 2px 8px;
+    margin: 0 8px;
+    flex: 1;
+    font-size: 12px;
+    color: #333;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.ad-browser-lock {
+    color: #4caf50;
+    margin-right: 4px;
+    font-size: 13px;
+}
+
+.ad-banner {
+    width: 100%;
+    background: linear-gradient(90deg, #ffe066 0%, #ffb347 100%);
+    color: #222;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 4px 0;
+    margin: 4px 0 8px 0;
+    border-radius: 3px;
+    font-family: Arial, sans-serif;
+    text-shadow: 1px 1px 0 #fff;
+}
+
+.ad-img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border: 1.5px solid #bcb9ad;
+    border-radius: 3px;
+    margin: 4px auto 4px auto;
+    display: block;
+    background: #fff;
+}
+
+.ad-input-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 6px 0 0 0;
+}
+.ad-fake-input {
+    border: 1.5px solid #bcb9ad;
+    border-radius: 2px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    margin-right: 4px;
+    width: 90px;
+    background: #fff;
+    color: #333;
+}
+.ad-fake-btn.big {
+    font-size: 14px;
+    padding: 6px 18px;
+    margin-top: 0;
+    margin-left: 4px;
+}
+
+.ad-content .ad-underline {
+    text-decoration: underline;
+    color: #c00;
+    font-weight: bold;
+}
+.ad-content .ad-bold {
+    font-weight: bold;
+    color: #003366;
+}
+.ad-content .ad-small {
+    font-size: 11px;
+    color: #666;
 } 
