@@ -64,6 +64,8 @@ class AdWhacker {
         this.comboResetButton.onclick = () => this.bankComboBonus();
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
+        this.frameBuffer = [];
+        this.frameInterval = null;
     }
 
     startGame() {
@@ -79,6 +81,10 @@ class AdWhacker {
         this.comboCount = 0;
         this.comboActive = false;
         this.comboBonusBanked = 0;
+        // Start capturing frames for GIF preview
+        this.frameBuffer = [];
+        if (this.frameInterval) clearInterval(this.frameInterval);
+        this.frameInterval = setInterval(() => this.captureFrame(), 200); // 5 fps
         console.log('Game started!');
 
         // Always clear intervals before setting new ones
@@ -814,11 +820,10 @@ class AdWhacker {
         this.gameActive = false;
         clearInterval(this.adInterval);
         clearInterval(this.timerInterval);
-        
+        if (this.frameInterval) clearInterval(this.frameInterval);
         // Remove all active ads
         this.activeAds.forEach(ad => ad.remove());
         this.activeAds.clear();
-
         // Show game over message
         const gameOver = document.createElement('div');
         gameOver.style.position = 'absolute';
@@ -830,12 +835,55 @@ class AdWhacker {
         gameOver.style.textAlign = 'center';
         gameOver.innerHTML = `GAME OVER!<br>Final Score: ${this.score}`;
         this.gameArea.appendChild(gameOver);
-
         // Show start button again
         this.startButton.style.display = 'block';
-        // Show leaderboard after a short delay
-        setTimeout(() => this.showLeaderboardModal(), 1200);
+        // Generate GIF and show leaderboard after a short delay
+        setTimeout(() => this.generateGifPreview(() => this.showLeaderboardModal()), 1200);
         console.log('Game over! Final Score:', this.score);
+    }
+
+    captureFrame() {
+        // Capture the game area as a data URL (canvas snapshot)
+        const gameArea = this.gameArea;
+        html2canvas(gameArea, {width: 800, height: 600, backgroundColor: null, scale: 0.4}).then(canvas => {
+            // Downscale to 320x240 for pixel effect
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 320;
+            tempCanvas.height = 240;
+            const ctx = tempCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(canvas, 0, 0, 320, 240);
+            this.frameBuffer.push(tempCanvas.toDataURL('image/png'));
+            // Keep only last 15 frames (~3 seconds at 5 fps)
+            if (this.frameBuffer.length > 15) this.frameBuffer.shift();
+        });
+    }
+
+    generateGifPreview(callback) {
+        const gifPreview = document.getElementById('gifPreview');
+        gifPreview.innerHTML = '<span style="color:#ffe066;font-size:18px;">Generating preview...</span>';
+        if (!window.gifshot || this.frameBuffer.length === 0) {
+            gifPreview.innerHTML = '<span style="color:#f00;">GIF preview unavailable</span>';
+            if (callback) callback();
+            return;
+        }
+        gifshot.createGIF({
+            images: this.frameBuffer,
+            gifWidth: 320,
+            gifHeight: 240,
+            interval: 0.2,
+            numFrames: this.frameBuffer.length,
+            sampleInterval: 1,
+            background: '#222',
+            progressCallback: function() {},
+        }, function(obj) {
+            if (!obj.error) {
+                gifPreview.innerHTML = `<img src="${obj.image}" style="width:320px;height:240px;image-rendering:pixelated;">`;
+            } else {
+                gifPreview.innerHTML = '<span style="color:#f00;">GIF preview unavailable</span>';
+            }
+            if (callback) callback();
+        });
     }
 
     // Leaderboard modal logic
