@@ -13,7 +13,7 @@ class AdWhacker {
         this.streak = 0;  // Track consecutive ad whacks
 
         // Sound effects
-        this.popSound = new Audio('sounds/pop.mp3');
+        this.popSound = new Audio('sounds/imrcv.wav');
         this.popSound.volume = 1.0; // Set volume to 100%
 
         // DOM elements

@@ -389,20 +389,17 @@ body {
     font-size: 72px;
     color: #ff00cc;
     text-shadow:
-        4px 4px 0 #00ffff,
-        8px 8px 0 #ffff00,
-        12px 12px 0 #0000ff,
-        0 0 24px #fff700,
-        0 0 48px #ff00cc;
+        0 2px 8px #00ffff,
+        0 4px 16px #0066ff;
     text-align: center;
     margin: 40px auto;
     padding: 20px;
     letter-spacing: 4px;
-    background: linear-gradient(90deg, #B0E0E6 0%, #000033 50%, #000066 100%);
+    background: linear-gradient(90deg, #ff00cc 0%, #00ffff 40%, #0066ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 16px #fff700);
+    filter: drop-shadow(0 0 16px #0000ff);
     animation: title-glow 2s infinite alternate, title-rainbow 6s linear infinite;
     position: relative;
     z-index: 10;
