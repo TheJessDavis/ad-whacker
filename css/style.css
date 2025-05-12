@@ -696,4 +696,31 @@ body {
 .ad-multicol .ad-col {
     flex: 1;
     min-width: 0;
+}
+
+.ad-popup .close-button {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: #c00 !important;
+    border: 2px solid #fff !important;
+    border-radius: 4px !important;
+    color: #fff !important;
+    font-size: 24px !important;
+    font-family: Arial, sans-serif !important;
+    font-weight: bold !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 9999 !important;
+    box-shadow: 1px 1px 8px #000a !important;
+    transition: background 0.2s, transform 0.1s !important;
+    opacity: 1 !important;
+}
+.ad-popup .close-button:hover {
+    background: #ff2222 !important;
+    transform: scale(1.2) !important;
 } 
