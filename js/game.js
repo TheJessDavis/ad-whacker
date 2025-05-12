@@ -582,7 +582,7 @@ class AdWhacker {
 
         // Make the entire ad clickable (except the close button)
         ad.addEventListener('click', (e) => {
-            if (e.target === ad || e.target.classList.contains('ad-content') || e.target.classList.contains('ad-fake-btn')) {
+            if (!e.target.classList.contains('close-button')) {
                 this.closeAd(ad);
             }
         });
@@ -642,10 +642,14 @@ class AdWhacker {
                 this.comboCount++;
             }
             this.lastBlockTimestamp = now;
-            this.updateMultiplierDisplay(this.comboCount);
+            // Multiplier only increases every 5 in a row
+            const multiplier = Math.floor(this.comboCount / 5);
+            this.updateMultiplierDisplay(multiplier < 1 ? 1 : multiplier);
             // Scoring
-            const baseAdValue = 10;
-            const pointsEarned = baseAdValue * this.comboCount;
+            let pointsEarned = 1;
+            if (multiplier >= 1) {
+                pointsEarned += 10 * multiplier;
+            }
             this.score += pointsEarned;
             this.scoreElement.textContent = this.score;
             // TODO: Combo trail, screen shake, etc.
@@ -654,40 +658,41 @@ class AdWhacker {
 
     getComboWindow(count) {
         if (count === 0) return 2000; // initial grace
-        return 1200 * Math.pow(0.95, count - 1); // decaying window
+        return 1500 * Math.pow(0.98, count - 1); // easier: longer window, slower decay
     }
 
     bankComboBonus() {
-        if (this.comboCount > 1) {
-            const bonus = 50 * (this.comboCount - 1);
+        const multiplier = Math.floor(this.comboCount / 5);
+        if (multiplier >= 1) {
+            const bonus = 50 * multiplier;
             this.score += bonus;
             this.scoreElement.textContent = this.score;
             this.comboBonusBanked += bonus;
-            this.showComboBonus(bonus);
+            this.showComboBonus(bonus, multiplier);
         }
         this.comboCount = 0;
         this.comboActive = false;
         this.updateMultiplierDisplay(1);
     }
 
-    updateMultiplierDisplay(count) {
-        if (count <= 1) {
+    updateMultiplierDisplay(multiplier) {
+        if (multiplier <= 1) {
             this.multiplierBadge.textContent = '×1';
             this.multiplierBadge.style.background = 'rgba(0,0,0,0.7)';
             this.multiplierBadge.style.color = '#fff';
             this.multiplierBadge.style.boxShadow = '0 0 16px #ff00de, 0 0 32px #00e6ff';
-        } else if (count < 5) {
-            this.multiplierBadge.textContent = `×${count}`;
+        } else if (multiplier < 5) {
+            this.multiplierBadge.textContent = `×${multiplier}`;
             this.multiplierBadge.style.background = 'linear-gradient(90deg,#ff00de,#ffe066)';
             this.multiplierBadge.style.color = '#fff';
             this.multiplierBadge.style.boxShadow = '0 0 24px #ff00de, 0 0 32px #ffe066';
-        } else if (count < 10) {
-            this.multiplierBadge.textContent = `×${count}`;
+        } else if (multiplier < 10) {
+            this.multiplierBadge.textContent = `×${multiplier}`;
             this.multiplierBadge.style.background = 'linear-gradient(90deg,#00e6ff,#ff00de)';
             this.multiplierBadge.style.color = '#fff';
             this.multiplierBadge.style.boxShadow = '0 0 32px #00e6ff, 0 0 32px #ff00de';
         } else {
-            this.multiplierBadge.textContent = `×${count}`;
+            this.multiplierBadge.textContent = `×${multiplier}`;
             this.multiplierBadge.style.background = 'linear-gradient(90deg,#ffe066,#ff6600)';
             this.multiplierBadge.style.color = '#fff';
             this.multiplierBadge.style.boxShadow = '0 0 40px #ff6600, 0 0 40px #ffe066';
@@ -697,12 +702,25 @@ class AdWhacker {
         setTimeout(() => {
             this.multiplierBadge.style.transform = 'scale(1)';
         }, 180);
+        // Screen shake at thresholds
+        if ([5,10,20,50,100].includes(multiplier)) {
+            this.triggerScreenShake();
+        }
     }
 
-    showComboBonus(bonus) {
+    triggerScreenShake() {
+        const container = document.querySelector('.game-container');
+        if (!container) return;
+        container.classList.add('screen-shake');
+        setTimeout(() => {
+            container.classList.remove('screen-shake');
+        }, 150);
+    }
+
+    showComboBonus(bonus, multiplier) {
         const bonusDiv = document.createElement('div');
         bonusDiv.className = 'streak-bonus';
-        bonusDiv.textContent = `+${bonus} COMBO BONUS!`;
+        bonusDiv.textContent = `+${bonus} COMBO BONUS! (×${multiplier})`;
         bonusDiv.style.position = 'absolute';
         bonusDiv.style.top = '50%';
         bonusDiv.style.left = '50%';

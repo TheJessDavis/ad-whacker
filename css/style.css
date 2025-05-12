@@ -820,4 +820,16 @@ body {
     text-shadow: 2px 2px 4px #000033;
     max-width: 600px;
     line-height: 1.4;
+}
+
+.screen-shake {
+    animation: screen-shake-anim 0.15s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes screen-shake-anim {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+    100% { transform: translateX(0); }
 } 
