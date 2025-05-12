@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Pop Sound</title>
+</head>
+<body>
+    <button onclick="generatePopSound()">Generate Pop Sound</button>
+    <button onclick="playSound()">Play Sound</button>
+    <button onclick="downloadSound()">Download Sound</button>
+    <script>
+        let audioContext;
+        let popSound;
+
+        function generatePopSound() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5 note
+            oscillator.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.1); // A4 note
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+            
+            // Store the audio data
+            const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < buffer.length; i++) {
+                data[i] = Math.sin(2 * Math.PI * (880 - 440 * i / buffer.length) * i / audioContext.sampleRate) * Math.exp(-i / (audioContext.sampleRate * 0.02));
+            }
+            popSound = buffer;
+        }
+
+        function playSound() {
+            if (!popSound) return;
+            const source = audioContext.createBufferSource();
+            source.buffer = popSound;
+            source.connect(audioContext.destination);
+            source.start();
+        }
+
+        function downloadSound() {
+            if (!popSound) return;
+            const wav = audioBufferToWav(popSound);
+            const blob = new Blob([wav], { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'pop.mp3';
+            a.click();
+        }
+
+        // Convert AudioBuffer to WAV format
+        function audioBufferToWav(buffer) {
+            const numChannels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const format = 1; // PCM
+            const bitDepth = 16;
+            
+            const bytesPerSample = bitDepth / 8;
+            const blockAlign = numChannels * bytesPerSample;
+            
+            const dataLength = buffer.length * numChannels * bytesPerSample;
+            const bufferLength = 44 + dataLength;
+            
+            const arrayBuffer = new ArrayBuffer(bufferLength);
+            const view = new DataView(arrayBuffer);
+            
+            // RIFF identifier
+            writeString(view, 0, 'RIFF');
+            // RIFF chunk length
+            view.setUint32(4, 36 + dataLength, true);
+            // RIFF type
+            writeString(view, 8, 'WAVE');
+            // format chunk identifier
+            writeString(view, 12, 'fmt ');
+            // format chunk length
+            view.setUint32(16, 16, true);
+            // sample format (raw)
+            view.setUint16(20, format, true);
+            // channel count
+            view.setUint16(22, numChannels, true);
+            // sample rate
+            view.setUint32(24, sampleRate, true);
+            // byte rate (sample rate * block align)
+            view.setUint32(28, sampleRate * blockAlign, true);
+            // block align (channel count * bytes per sample)
+            view.setUint16(32, blockAlign, true);
+            // bits per sample
+            view.setUint16(34, bitDepth, true);
+            // data chunk identifier
+            writeString(view, 36, 'data');
+            // data chunk length
+            view.setUint32(40, dataLength, true);
+            
+            // Write the PCM samples
+            const offset = 44;
+            const channelData = [];
+            for (let i = 0; i < numChannels; i++) {
+                channelData.push(buffer.getChannelData(i));
+            }
+            
+            let pos = 0;
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numChannels; channel++) {
+                    const sample = Math.max(-1, Math.min(1, channelData[channel][i]));
+                    const value = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                    view.setInt16(offset + pos, value, true);
+                    pos += 2;
+                }
+            }
+            
+            return arrayBuffer;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+    </script>
+</body>
+</html> 
