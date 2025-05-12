@@ -14,54 +14,17 @@ class AdWhacker {
         this.adInterval = null;
         this.timerInterval = null;
         this.activeAds = new Set();
-        // Combo system
         this.comboCount = 0;
         this.lastBlockTimestamp = 0;
         this.comboActive = false;
-        this.comboBonusBanked = 0;
         // Sound effects
         this.popSound = new Audio('sounds/imrcv.wav');
-        this.popSound.volume = 1.0; // Set volume to 100%
+        this.popSound.volume = 1.0;
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
         this.scoreElement = document.getElementById('score');
         this.timerElement = document.getElementById('timer');
         this.startButton = document.getElementById('startButton');
-        // Multiplier badge
-        this.multiplierBadge = document.createElement('div');
-        this.multiplierBadge.className = 'multiplier-badge';
-        this.multiplierBadge.style.position = 'absolute';
-        this.multiplierBadge.style.top = '16px';
-        this.multiplierBadge.style.right = '32px';
-        this.multiplierBadge.style.zIndex = '1001';
-        this.multiplierBadge.style.display = 'none';
-        this.multiplierBadge.style.fontFamily = "'Press Start 2P', cursive";
-        this.multiplierBadge.style.fontSize = '32px';
-        this.multiplierBadge.style.padding = '10px 24px';
-        this.multiplierBadge.style.borderRadius = '18px';
-        this.multiplierBadge.style.border = '3px solid #fff';
-        this.multiplierBadge.style.boxShadow = '0 0 16px #ff00de, 0 0 32px #00e6ff';
-        this.multiplierBadge.style.background = 'rgba(0,0,0,0.7)';
-        this.multiplierBadge.style.transition = 'background 0.2s, color 0.2s, transform 0.2s';
-        document.body.appendChild(this.multiplierBadge);
-        // Combo Reset button
-        this.comboResetButton = document.createElement('button');
-        this.comboResetButton.innerHTML = '💾';
-        this.comboResetButton.title = 'Combo Reset (Bank Bonus)';
-        this.comboResetButton.className = 'combo-reset-btn';
-        this.comboResetButton.style.position = 'absolute';
-        this.comboResetButton.style.top = '70px';
-        this.comboResetButton.style.right = '32px';
-        this.comboResetButton.style.zIndex = '1002';
-        this.comboResetButton.style.fontSize = '28px';
-        this.comboResetButton.style.background = '#222';
-        this.comboResetButton.style.color = '#ffe066';
-        this.comboResetButton.style.border = '2px solid #fff';
-        this.comboResetButton.style.borderRadius = '10px';
-        this.comboResetButton.style.cursor = 'pointer';
-        this.comboResetButton.style.display = 'none';
-        document.body.appendChild(this.comboResetButton);
-        this.comboResetButton.onclick = () => this.bankComboBonus();
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
         this.frameBuffer = [];
@@ -74,27 +37,17 @@ class AdWhacker {
         this.startButton.style.display = 'none';
         this.scoreElement.textContent = this.score;
         this.timerElement.textContent = this.timeLeft;
-        this.multiplierBadge.style.display = 'none';
-        this.comboResetButton.style.display = 'none';
-        this.updateMultiplierDisplay(1);
         this.lastBlockTimestamp = 0;
         this.comboCount = 0;
         this.comboActive = false;
-        this.comboBonusBanked = 0;
         // Start capturing frames for GIF preview
         this.frameBuffer = [];
         if (this.frameInterval) clearInterval(this.frameInterval);
-        this.frameInterval = setInterval(() => this.captureFrame(), 200); // 5 fps
-        console.log('Game started!');
-
+        this.frameInterval = setInterval(() => this.captureFrame(), 200);
         // Always clear intervals before setting new ones
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
-        
-        // Start spawning ads more frequently (every 500ms instead of 1000ms)
         this.adInterval = setInterval(() => this.spawnAd(), 500);
-        
-        // Start timer
         this.timerInterval = setInterval(() => this.updateTimer(), 1000);
     }
 
@@ -104,16 +57,12 @@ class AdWhacker {
         this.gameActive = false;
         this.comboCount = 0;
         this.comboActive = false;
-        this.comboBonusBanked = 0;
         this.scoreElement.textContent = '0';
         this.timerElement.textContent = '30';
         this.gameArea.innerHTML = '';
         this.activeAds.clear();
-        this.multiplierBadge.style.display = 'none';
-        this.comboResetButton.style.display = 'none';
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
-        console.log('Game reset!');
     }
 
     spawnAd() {
@@ -614,45 +563,36 @@ class AdWhacker {
         if (this.activeAds.has(ad)) {
             ad.classList.add('disappearing');
             // Combo break if missed
-            if (this.comboActive && this.comboCount > 1) {
-                this.bankComboBonus();
-            }
             this.comboActive = false;
             this.comboCount = 0;
-            // Remove the ad after the animation completes
             setTimeout(() => {
                 if (this.activeAds.has(ad)) {
                     this.activeAds.delete(ad);
                     ad.remove();
                 }
-            }, 500); // Match this with the CSS animation duration
+            }, 500);
         }
     }
 
     closeAd(ad) {
         if (this.activeAds.has(ad)) {
             // Play pop sound
-            this.popSound.currentTime = 0; // Reset sound to start
+            this.popSound.currentTime = 0;
             this.popSound.play().catch(e => console.log('Sound play failed:', e));
             // Get ad position for star trail
             const adRect = ad.getBoundingClientRect();
             const gameRect = this.gameArea.getBoundingClientRect();
             const adCenterX = adRect.left + adRect.width / 2 - gameRect.left;
             const adCenterY = adRect.top + adRect.height / 2 - gameRect.top;
-            // Use disappearAd for animation, then remove
             this.disappearAd(ad);
             // Combo logic
             const now = performance.now();
             let elapsed = now - (this.lastBlockTimestamp || now);
-            let window = this.getComboWindow(this.comboCount);
-            // Buffering: if two ads blocked within 50ms, count as one
+            let window = 1500; // fixed window
             if (elapsed < 50) return;
             let comboContinues = false;
             if (!this.comboActive || elapsed > window) {
                 // Combo broken or first hit
-                if (this.comboActive && this.comboCount > 1) {
-                    this.bankComboBonus();
-                }
                 this.comboCount = 1;
                 this.comboActive = true;
             } else {
@@ -660,20 +600,14 @@ class AdWhacker {
                 comboContinues = true;
             }
             this.lastBlockTimestamp = now;
-            // Multiplier only increases every 5 in a row
-            const multiplier = Math.floor(this.comboCount / 5);
-            this.updateMultiplierDisplay(multiplier < 1 ? 1 : multiplier);
-            // Scoring: always at least 1 point per ad
+            // Scoring: +1 per ad, +10 every 5th in a row
             let pointsEarned = 1;
-            if (multiplier > 0) {
-                pointsEarned += 10 * multiplier;
+            if (this.comboCount % 5 === 0) {
+                pointsEarned += 10;
+                this.showComboPopup(adCenterX, adCenterY);
             }
             this.score += pointsEarned;
             this.scoreElement.textContent = this.score;
-            // Always show badge/floppy for clarity
-            this.multiplierBadge.style.display = 'block';
-            this.comboResetButton.style.display = 'block';
-            // Star trail effect
             this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
         }
     }
@@ -724,86 +658,20 @@ class AdWhacker {
         }
     }
 
-    getComboWindow(count) {
-        if (count === 0) return 2000; // initial grace
-        return 1500 * Math.pow(0.98, count - 1); // easier: longer window, slower decay
-    }
-
-    bankComboBonus() {
-        const multiplier = Math.floor(this.comboCount / 5);
-        if (multiplier >= 1) {
-            const bonus = 50 * multiplier;
-            this.score += bonus;
-            this.scoreElement.textContent = this.score;
-            this.comboBonusBanked += bonus;
-            this.showComboBonus(bonus, multiplier);
-            // Flash badge
-            this.multiplierBadge.style.background = '#fff';
-            setTimeout(() => this.updateMultiplierDisplay(multiplier), 200);
-        }
-        this.comboCount = 0;
-        this.comboActive = false;
-        this.updateMultiplierDisplay(1);
-        this.multiplierBadge.style.display = 'none';
-        this.comboResetButton.style.display = 'none';
-    }
-
-    updateMultiplierDisplay(multiplier) {
-        if (multiplier <= 1) {
-            this.multiplierBadge.textContent = '×1';
-            this.multiplierBadge.style.background = 'rgba(0,0,0,0.7)';
-            this.multiplierBadge.style.color = '#fff';
-            this.multiplierBadge.style.boxShadow = '0 0 16px #ff00de, 0 0 32px #00e6ff';
-        } else if (multiplier < 5) {
-            this.multiplierBadge.textContent = `×${multiplier}`;
-            this.multiplierBadge.style.background = 'linear-gradient(90deg,#ff00de,#ffe066)';
-            this.multiplierBadge.style.color = '#fff';
-            this.multiplierBadge.style.boxShadow = '0 0 24px #ff00de, 0 0 32px #ffe066';
-        } else if (multiplier < 10) {
-            this.multiplierBadge.textContent = `×${multiplier}`;
-            this.multiplierBadge.style.background = 'linear-gradient(90deg,#00e6ff,#ff00de)';
-            this.multiplierBadge.style.color = '#fff';
-            this.multiplierBadge.style.boxShadow = '0 0 32px #00e6ff, 0 0 32px #ff00de';
-        } else {
-            this.multiplierBadge.textContent = `×${multiplier}`;
-            this.multiplierBadge.style.background = 'linear-gradient(90deg,#ffe066,#ff6600)';
-            this.multiplierBadge.style.color = '#fff';
-            this.multiplierBadge.style.boxShadow = '0 0 40px #ff6600, 0 0 40px #ffe066';
-        }
-        // Bounce effect
-        this.multiplierBadge.style.transform = 'scale(1.25)';
-        setTimeout(() => {
-            this.multiplierBadge.style.transform = 'scale(1)';
-        }, 180);
-        // Screen shake at thresholds
-        if ([5,10,20,50,100].includes(multiplier)) {
-            this.triggerScreenShake();
-        }
-    }
-
-    triggerScreenShake() {
-        const container = document.querySelector('.game-container');
-        if (!container) return;
-        container.classList.add('screen-shake');
-        setTimeout(() => {
-            container.classList.remove('screen-shake');
-        }, 150);
-    }
-
-    showComboBonus(bonus, multiplier) {
-        const bonusDiv = document.createElement('div');
-        bonusDiv.className = 'streak-bonus';
-        bonusDiv.textContent = `+${bonus} COMBO BONUS! (×${multiplier})`;
-        bonusDiv.style.position = 'absolute';
-        bonusDiv.style.top = '50%';
-        bonusDiv.style.left = '50%';
-        bonusDiv.style.transform = 'translate(-50%, -50%)';
-        bonusDiv.style.color = '#ffe066';
-        bonusDiv.style.fontSize = '28px';
-        bonusDiv.style.textShadow = '2px 2px #ff00de, 2px 2px #00e6ff';
-        bonusDiv.style.animation = 'bonus-pop 0.7s ease-out forwards';
-        this.gameArea.appendChild(bonusDiv);
-        setTimeout(() => bonusDiv.remove(), 700);
+    showComboPopup(x, y) {
+        const comboDiv = document.createElement('div');
+        comboDiv.className = 'streak-bonus';
+        comboDiv.textContent = 'COMBO! +10';
+        comboDiv.style.position = 'absolute';
+        comboDiv.style.left = `${x}px`;
+        comboDiv.style.top = `${y}px`;
+        comboDiv.style.transform = 'translate(-50%, -50%)';
+        comboDiv.style.color = '#ffe066';
+        comboDiv.style.fontSize = '28px';
+        comboDiv.style.textShadow = '2px 2px #ff00de, 2px 2px #00e6ff';
+        comboDiv.style.animation = 'bonus-pop 0.7s ease-out forwards';
+        this.gameArea.appendChild(comboDiv);
+        setTimeout(() => comboDiv.remove(), 700);
     }
 
     updateTimer() {
