@@ -12,6 +12,10 @@ class AdWhacker {
         this.activeAds = new Set();
         this.streak = 0;  // Track consecutive ad whacks
 
+        // Sound effects
+        this.popSound = new Audio('sounds/pop.mp3');
+        this.popSound.volume = 0.5; // Set volume to 50%
+
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
         this.scoreElement = document.getElementById('score');
@@ -523,10 +527,12 @@ class AdWhacker {
         const ad = adStyles[Math.floor(Math.random() * adStyles.length)]();
 
         // Random position within game area
-        const maxX = this.gameArea.clientWidth - ad.offsetWidth;
-        const maxY = this.gameArea.clientHeight - ad.offsetHeight;
-        ad.style.left = `${Math.random() * maxX}px`;
-        ad.style.top = `${Math.random() * maxY}px`;
+        const maxX = Math.max(0, this.gameArea.clientWidth - ad.offsetWidth);
+        const maxY = Math.max(0, this.gameArea.clientHeight - ad.offsetHeight);
+        const left = Math.floor(Math.random() * (maxX + 1));
+        const top = Math.floor(Math.random() * (maxY + 1));
+        ad.style.left = `${left}px`;
+        ad.style.top = `${top}px`;
 
         // Make the entire ad clickable (except the close button)
         ad.addEventListener('click', (e) => {
@@ -564,6 +570,10 @@ class AdWhacker {
 
     closeAd(ad) {
         if (this.activeAds.has(ad)) {
+            // Play pop sound
+            this.popSound.currentTime = 0; // Reset sound to start
+            this.popSound.play().catch(e => console.log('Sound play failed:', e));
+            
             // Use disappearAd for animation, then remove
             this.disappearAd(ad);
             // Score logic only if user closed (not auto-disappear)
