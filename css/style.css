@@ -276,24 +276,30 @@ body {
 }
 
 .ad-titlebar .close-button {
-    position: static;
-    width: 18px;
-    height: 18px;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
     background: #c00;
-    border: 1.5px solid #fff;
-    border-radius: 2px;
+    border: 2px solid #fff;
+    border-radius: 4px;
     color: #fff;
-    font-size: 13px;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 8px;
-    margin-right: 0;
-    transition: background 0.2s;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 1px 1px 4px #0008;
+    transition: background 0.2s, transform 0.1s;
 }
 
 .ad-titlebar .close-button:hover {
     background: #ff2222;
+    transform: scale(1.1);
 }
 
 .ad-content {
