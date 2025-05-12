@@ -584,17 +584,25 @@ class AdWhacker {
             // Play pop sound
             this.popSound.currentTime = 0;
             this.popSound.play().catch(e => console.log('Sound play failed:', e));
+            
             // Get ad position for star trail
             const adRect = ad.getBoundingClientRect();
             const gameRect = this.gameArea.getBoundingClientRect();
             const adCenterX = adRect.left + adRect.width / 2 - gameRect.left;
             const adCenterY = adRect.top + adRect.height / 2 - gameRect.top;
+            
+            // Remove ad first
             this.disappearAd(ad);
+            
             // Combo logic
             const now = performance.now();
             let elapsed = now - (this.lastBlockTimestamp || now);
             let window = 1500; // fixed window
+            
+            // Prevent double-clicks
             if (elapsed < 50) return;
+            
+            // Update combo state
             let comboContinues = false;
             if (!this.comboActive || elapsed > window) {
                 this.comboCount = 1;
@@ -604,19 +612,27 @@ class AdWhacker {
                 comboContinues = true;
             }
             this.lastBlockTimestamp = now;
+            
             // Scoring: +1 per ad, +10 every 5th in a row
             let pointsEarned = 1;
             if (this.comboCount % 5 === 0) {
                 pointsEarned += 10;
                 this.showComboPopup(adCenterX, adCenterY);
             }
+            
+            // Update score
             this.score += pointsEarned;
-            console.log('closeAd called, score:', this.score, 'pointsEarned:', pointsEarned);
+            console.log('Score updated:', this.score, 'Points earned:', pointsEarned, 'Combo count:', this.comboCount);
+            
+            // Update score display
             if (this.scoreElement) {
-                this.scoreElement.textContent = this.score;
+                this.scoreElement.textContent = this.score.toString();
+                console.log('Score element updated with:', this.score);
             } else {
-                console.error('scoreElement not found!');
+                console.error('Score element not found!');
             }
+            
+            // Visual feedback
             this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
         }
     }
