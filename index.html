@@ -8,15 +8,17 @@
 </head>
 <body>
     <div class="game-title">Pop Up Ad Whacker</div>
-    <div class="game-container">
-        <div class="game-header">
-            <div class="score">Score: <span id="score">0</span></div>
-            <div class="timer">Time: <span id="timer">30</span>s</div>
+    <div class="monitor-frame">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="timer">Time: <span id="timer">30</span>s</div>
+            </div>
+            <div class="game-area" id="gameArea">
+                <!-- Ads will be dynamically inserted here -->
+            </div>
+            <button id="startButton" class="start-button">START GAME</button>
         </div>
-        <div class="game-area" id="gameArea">
-            <!-- Ads will be dynamically inserted here -->
-        </div>
-        <button id="startButton" class="start-button">START GAME</button>
     </div>
     <script src="js/game.js"></script>
 </body>
