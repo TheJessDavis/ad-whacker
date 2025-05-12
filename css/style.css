@@ -1,5 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* Add Boom Comic Font */
+@font-face {
+    font-family: 'BoomComic';
+    src: url('../fonts/Boom Comic Font.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Add your custom font */
+@font-face {
+    font-family: 'YourCustomFont';
+    src: url('../fonts/your-font.ttf') format('truetype'),
+         url('../fonts/your-font.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -368,7 +385,7 @@ body {
 }
 
 .game-title {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'BoomComic', 'Press Start 2P', cursive;
     font-size: 72px;
     color: #ff00cc;
     text-shadow:
@@ -381,7 +398,7 @@ body {
     margin: 40px auto;
     padding: 20px;
     letter-spacing: 4px;
-    background: linear-gradient(90deg, #ff00cc 0%, #00ffff 50%, #ffff00 100%);
+    background: linear-gradient(90deg, #B0E0E6 0%, #000033 50%, #000066 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -396,11 +413,11 @@ body {
 
 @keyframes title-glow {
     0% {
-        filter: drop-shadow(0 0 16px #fff700) drop-shadow(0 0 8px #ff00cc);
+        filter: drop-shadow(0 0 16px #B0E0E6) drop-shadow(0 0 8px #000033);
         transform: rotate(-2deg) scale(1);
     }
     100% {
-        filter: drop-shadow(0 0 32px #00ffff) drop-shadow(0 0 24px #ffff00);
+        filter: drop-shadow(0 0 32px #000066) drop-shadow(0 0 24px #000033);
         transform: rotate(2deg) scale(1.05);
     }
 }
@@ -753,4 +770,16 @@ body {
     border-left-color: #fff !important;
     border-top-color: #fff !important;
     box-shadow: inset 1px 1px #808080 !important;
+}
+
+.game-instructions {
+    font-family: 'BoomComic', 'Press Start 2P', cursive;
+    font-size: 24px;
+    color: #B0E0E6;
+    text-align: center;
+    margin: 20px auto;
+    padding: 10px;
+    text-shadow: 2px 2px 4px #000033;
+    max-width: 600px;
+    line-height: 1.4;
 } 
