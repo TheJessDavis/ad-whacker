@@ -60,7 +60,7 @@ class AdWhacker {
         if (!this.gameActive) return;
         console.log('Spawning ad!');
 
-        // --- Ad style templates ---
+        // --- 20 Unique Ad style templates ---
         const adStyles = [
             // 1. Congratulations banner with checklist and starburst
             () => {
@@ -68,8 +68,6 @@ class AdWhacker {
                 ad.className = 'ad-popup';
                 ad.style.width = '350px';
                 ad.style.height = '210px';
-
-                // Browser chrome
                 const chrome = document.createElement('div');
                 chrome.className = 'ad-browser-chrome';
                 chrome.innerHTML = `
@@ -79,14 +77,10 @@ class AdWhacker {
                     <span class='ad-browser-url'><span class='ad-browser-lock'>🔒</span>http://ads1.revenue.net</span>
                 `;
                 ad.appendChild(chrome);
-
-                // Big banner
                 const congrats = document.createElement('div');
                 congrats.className = 'ad-congrats-banner';
                 congrats.textContent = 'CONGRATULATIONS!';
                 ad.appendChild(congrats);
-
-                // Content
                 const content = document.createElement('div');
                 content.className = 'ad-content yellow';
                 content.innerHTML = `
@@ -97,144 +91,333 @@ class AdWhacker {
                         <li>19-inch Color CRT Monitor (18-inch viewable)</li>
                     </ul>
                     <span class='ad-starburst'>FREE!</span>
-                    <img class='ad-img-wide' src='https://upload.wikimedia.org/wikipedia/commons/4/4c/Gateway_2000_full_system.jpg' alt='Gateway Computer'>
+                    <img class='ad-img-wide' src='https://upload.wikimedia.org/wikipedia/commons/4/4c/Gateway_2000_full_system.jpg' alt='Gateway Computer' onerror="this.style.display='none'">
                     <br><a href='#' class='ad-underline'>Click Here to Claim Your FREE* Desktop Computer!</a>
                 `;
                 ad.appendChild(content);
-                return ad;
-            },
-            // 2. Classic browser window with address bar, banner, and input
-            () => {
-                const ad = document.createElement('div');
-                ad.className = 'ad-popup';
-                ad.style.width = `${260 + Math.random() * 60}px`;
-                ad.style.height = `${180 + Math.random() * 40}px`;
-
-                // Browser chrome
-                const chrome = document.createElement('div');
-                chrome.className = 'ad-browser-chrome';
-                chrome.innerHTML = `
-                    <span class='ad-browser-btn back'></span>
-                    <span class='ad-browser-btn fwd'></span>
-                    <span class='ad-browser-btn reload'></span>
-                    <span class='ad-browser-url'><span class='ad-browser-lock'>🔒</span>http://www.travelzoo.com</span>
-                `;
-                ad.appendChild(chrome);
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar';
-                titlebar.innerHTML = `<span class='ad-icon'>🌐</span><span class='ad-title'>Travelzoo Top 20</span>`;
+                // Add close button
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
                 closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                ad.appendChild(titlebar);
-
-                // Banner
-                const banner = document.createElement('div');
-                banner.className = 'ad-banner';
-                banner.textContent = 'The Top 20 Travel Deals on the Web!';
-                ad.appendChild(banner);
-
-                // Content
-                const content = document.createElement('div');
-                content.className = 'ad-content yellow';
-                content.innerHTML = `
-                    Specials <span class='ad-bold'>handpicked every week</span> from over 200 sites.<br>
-                    <span class='ad-underline'>Interested in Deals Like These?</span><br>
-                    <span class='ad-small'>• Europe Sale Round Trip<br>• Count $100s off Hotels</span>
-                    <div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn big'>Sign Up</span></div>
-                `;
-                ad.appendChild(content);
+                ad.appendChild(closeBtn);
                 return ad;
             },
-            // 3. Ad with image, blue content, and fake button
+            // 2. Blue info bar with yellow button
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
-                ad.style.width = `${220 + Math.random() * 60}px`;
-                ad.style.height = `${150 + Math.random() * 40}px`;
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar';
-                titlebar.innerHTML = `<span class='ad-icon'>🖼️</span><span class='ad-title'>Surveillance Alert</span>`;
+                ad.style.width = '270px';
+                ad.style.height = '140px';
+                const info = document.createElement('div');
+                info.className = 'ad-info-bar';
+                info.textContent = 'Before you go, did you know...';
+                // Add close button to info bar
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
                 closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                ad.appendChild(titlebar);
-
-                // Banner
-                const banner = document.createElement('div');
-                banner.className = 'ad-banner';
-                banner.textContent = 'Make Your Home Safe And Secure';
-                ad.appendChild(banner);
-
-                // Image
-                const img = document.createElement('img');
-                img.className = 'ad-img';
-                img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Surveillance_camera.svg/120px-Surveillance_camera.svg.png';
-                img.alt = 'Surveillance';
-                ad.appendChild(img);
-
-                // Content
+                info.appendChild(closeBtn);
+                ad.appendChild(info);
                 const content = document.createElement('div');
                 content.className = 'ad-content blue';
-                content.innerHTML = `Broadcasts Live Color Video Directly To Your TV, VCR or PC<br><span class='ad-fake-btn'>Click Here</span>`;
+                content.innerHTML = `You can add <b>AOL</b> for Broadband to any high-speed cable or DSL connection!<br><span class='ad-badge'>GET A FREE TRIAL!</span>`;
                 ad.appendChild(content);
                 return ad;
             },
-            // 4. System alert with input and two buttons
+            // 3. Red sweepstakes with product image
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
-                ad.style.width = `${200 + Math.random() * 60}px`;
-                ad.style.height = `${120 + Math.random() * 40}px`;
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar gray';
-                titlebar.innerHTML = `<span class='ad-title'>Message Alert</span>`;
+                ad.style.width = '260px';
+                ad.style.height = '160px';
+                const header = document.createElement('div');
+                header.className = 'ad-red-header';
+                header.textContent = 'Enter to WIN → XEROX';
+                // Add close button to header
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
                 closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                ad.appendChild(titlebar);
-
-                // Content
+                header.appendChild(closeBtn);
+                ad.appendChild(header);
                 const content = document.createElement('div');
                 content.className = 'ad-content';
-                content.innerHTML = `You have <span class='ad-bold'>1 message</span> waiting for you.<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Username'><span class='ad-fake-btn'>OK</span><span class='ad-fake-btn'>Cancel</span></div>`;
+                content.innerHTML = `WIN an $11,000 Business Upgrade Package!<br><img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/2/2e/Xerox_Phaser_8400.jpg' alt='Xerox' onerror="this.style.display='none'"><br><span class='ad-fake-btn'>Enter Now</span>`;
                 ad.appendChild(content);
                 return ad;
             },
-            // 5. Classic pop-up with big red text and underline
+            // 4. Green/yellow "What's New" browser window
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
-                ad.style.width = `${180 + Math.random() * 80}px`;
-                ad.style.height = `${100 + Math.random() * 60}px`;
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar';
-                titlebar.innerHTML = `<span class='ad-icon'>⚠️</span><span class='ad-title'>Warning!</span>`;
+                ad.style.width = '300px';
+                ad.style.height = '180px';
+                const chrome = document.createElement('div');
+                chrome.className = 'ad-browser-chrome';
+                chrome.innerHTML = `<span class='ad-browser-url'>Netscape What's New</span>`;
+                // Add close button to chrome
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
                 closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                ad.appendChild(titlebar);
-
-                // Content
+                chrome.appendChild(closeBtn);
+                ad.appendChild(chrome);
+                const header = document.createElement('div');
+                header.className = 'ad-green-header';
+                header.textContent = "What's New";
+                ad.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'ad-content green';
+                content.innerHTML = `<ul class='ad-checklist'><li>Science Proves: Drinking Causes...</li><li>Strange Deep Budget Mystery</li><li>Dog Saves Owner from Email</li></ul><span class='ad-fake-btn'>Read More</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 5. Orange "Are You Paying Too Much?" banner
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '270px';
+                ad.style.height = '140px';
+                const banner = document.createElement('div');
+                banner.className = 'ad-orange-banner';
+                banner.textContent = 'Are You Paying Too Much?';
+                ad.appendChild(banner);
                 const content = document.createElement('div');
                 content.className = 'ad-content';
-                content.innerHTML = `<span class='ad-underline' style='font-size:16px;'>Are You Paying Too Much?</span><br><span class='ad-small'>Rates are at historic lows!</span><br><span class='ad-fake-btn'>Get Quote</span>`;
+                content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/6/6b/Dollar_bill_house_2.jpg' alt='Money House' onerror="this.style.display='none'"><br>Rates are at historic lows!<br><span class='ad-fake-btn'>Get Quote</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 6. Travel ad with blue header and newsletter signup
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '260px';
+                ad.style.height = '150px';
+                const info = document.createElement('div');
+                info.className = 'ad-info-bar';
+                info.textContent = 'Travelzoo Top 20';
+                ad.appendChild(info);
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `The Top 20 Travel Deals on the Web!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn big'>Sign Up</span></div>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 7. Free test badge ad
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '200px';
+                ad.style.height = '110px';
+                const badge = document.createElement('div');
+                badge.className = 'ad-badge';
+                badge.textContent = 'Take this free test!';
+                ad.appendChild(badge);
+                const content = document.createElement('div');
+                content.className = 'ad-content blue';
+                content.innerHTML = `Find out your personality type.<br><span class='ad-fake-btn'>Start</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 8. Multi-column ad with icons
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '320px';
+                ad.style.height = '140px';
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<div class='ad-multicol'><div class='ad-col'><span class='ad-icon'>💡</span> Save on bills!<br><span class='ad-icon'>🚗</span> Car insurance</div><div class='ad-col'><span class='ad-icon'>🏠</span> Home loan<br><span class='ad-icon'>💳</span> Credit cards</div></div><span class='ad-fake-btn'>Compare</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 9. Red warning with exclamation and fake link
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '220px';
+                ad.style.height = '110px';
+                const header = document.createElement('div');
+                header.className = 'ad-red-header';
+                header.textContent = 'WARNING!';
+                ad.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<span class='ad-underline'>Your PC is at risk!</span><br><span class='ad-fake-btn'>Scan Now</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 10. Blue info bar with checkmarks
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '250px';
+                ad.style.height = '120px';
+                const info = document.createElement('div');
+                info.className = 'ad-info-bar';
+                info.textContent = 'Get 15 Free Guides!';
+                ad.appendChild(info);
+                const content = document.createElement('div');
+                content.className = 'ad-content blue';
+                content.innerHTML = `<ul class='ad-checklist'><li>Tax Tips</li><li>Investing</li><li>Retirement</li></ul><span class='ad-fake-btn'>Download</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 11. Newsletter pop-up with green header
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '240px';
+                ad.style.height = '120px';
+                const header = document.createElement('div');
+                header.className = 'ad-green-header';
+                header.textContent = 'Newsletter Signup';
+                ad.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'ad-content green';
+                content.innerHTML = `Get weekly deals and tips!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Subscribe</span></div>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 12. Browser window with fake search bar
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '260px';
+                ad.style.height = '120px';
+                const chrome = document.createElement('div');
+                chrome.className = 'ad-browser-chrome';
+                chrome.innerHTML = `<span class='ad-browser-url'>http://search.example.com</span>`;
+                ad.appendChild(chrome);
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<div class='ad-input-row'><input class='ad-fake-input' placeholder='Search'><span class='ad-fake-btn'>Go</span></div><span class='ad-small'>Sponsored Results</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 13. Big "FREE!" badge and product image
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '220px';
+                ad.style.height = '130px';
+                const badge = document.createElement('div');
+                badge.className = 'ad-starburst';
+                badge.textContent = 'FREE!';
+                ad.appendChild(badge);
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/3/3a/Old_computer_icon.png' alt='Old Computer' onerror="this.style.display='none'"><br>Get your free screensaver!<br><span class='ad-fake-btn'>Download</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 14. "Special Offer" with orange banner and two buttons
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '230px';
+                ad.style.height = '120px';
+                const banner = document.createElement('div');
+                banner.className = 'ad-orange-banner';
+                banner.textContent = 'Special Offer!';
+                ad.appendChild(banner);
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `Upgrade now and save 70%!<br><span class='ad-fake-btn'>Upgrade</span><span class='ad-fake-btn'>No Thanks</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 15. "You've Won!" with big red header and input
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '250px';
+                ad.style.height = '120px';
+                const header = document.createElement('div');
+                header.className = 'ad-red-header';
+                header.textContent = "YOU'VE WON!";
+                ad.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `Enter your email to claim your prize!<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Claim</span></div>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 16. "Risk-Free" blue info bar with badge
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '220px';
+                ad.style.height = '110px';
+                const info = document.createElement('div');
+                info.className = 'ad-info-bar';
+                info.textContent = 'Try 2 Risk-Free Issues!';
+                ad.appendChild(info);
+                const content = document.createElement('div');
+                content.className = 'ad-content blue';
+                content.innerHTML = `<span class='ad-badge'>15 Free Guides</span><br>Get your free trial today!`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 17. "Special Internet Offer" with green header and checkmarks
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '250px';
+                ad.style.height = '120px';
+                const header = document.createElement('div');
+                header.className = 'ad-green-header';
+                header.textContent = 'Special Internet Offer';
+                ad.appendChild(header);
+                const content = document.createElement('div');
+                content.className = 'ad-content green';
+                content.innerHTML = `<ul class='ad-checklist'><li>Unlimited Access</li><li>No Contracts</li><li>24/7 Support</li></ul><span class='ad-fake-btn'>Sign Up</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 18. "Newsletter" with multi-column layout
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '320px';
+                ad.style.height = '130px';
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<div class='ad-multicol'><div class='ad-col'><b>Newsletter</b><br>Get deals weekly!</div><div class='ad-col'><div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn'>Subscribe</span></div></div></div>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 19. "Free Quote" with orange banner and image
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '240px';
+                ad.style.height = '120px';
+                const banner = document.createElement('div');
+                banner.className = 'ad-orange-banner';
+                banner.textContent = 'Get a Free Quote!';
+                ad.appendChild(banner);
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<img class='ad-img' src='https://upload.wikimedia.org/wikipedia/commons/6/6b/Dollar_bill_house_2.jpg' alt='Money House' onerror="this.style.display='none'"><br>See how much you could save!<br><span class='ad-fake-btn'>Get Quote</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 20. "Special Bonus" with starburst and two buttons
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = '220px';
+                ad.style.height = '110px';
+                const badge = document.createElement('div');
+                badge.className = 'ad-starburst';
+                badge.textContent = 'BONUS!';
+                ad.appendChild(badge);
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `Get a special bonus with your order!<br><span class='ad-fake-btn'>Claim</span><span class='ad-fake-btn'>No Thanks</span>`;
                 ad.appendChild(content);
                 return ad;
             }

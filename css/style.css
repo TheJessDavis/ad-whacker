@@ -606,4 +606,88 @@ body {
     margin: 6px auto 6px auto;
     display: block;
     background: #fff;
+}
+
+.ad-info-bar {
+    width: 100%;
+    background: linear-gradient(90deg, #3a6ea5 0%, #b0c4de 100%);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: left;
+    padding: 4px 10px;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid #222;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.ad-red-header {
+    width: 100%;
+    background: linear-gradient(90deg, #d60000 0%, #ffb347 100%);
+    color: #fff;
+    font-family: Impact, 'Arial Black', Arial, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    padding: 4px 0;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid #bcb9ad;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #fff;
+}
+
+.ad-green-header {
+    width: 100%;
+    background: linear-gradient(90deg, #bfff00 0%, #eaffea 100%);
+    color: #225522;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    padding: 4px 10px;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 2px solid #66ff66;
+    margin-bottom: 4px;
+}
+
+.ad-orange-banner {
+    width: 100%;
+    background: linear-gradient(90deg, #ffb347 0%, #ffe066 100%);
+    color: #c00;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 0;
+    border-radius: 3px;
+    margin: 4px 0 8px 0;
+    border-bottom: 2px solid #ffb347;
+    letter-spacing: 1px;
+}
+
+.ad-badge {
+    display: inline-block;
+    background: #ffe066;
+    color: #c00;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    box-shadow: 0 0 4px #ffb347;
+    border: 2px solid #c00;
+    margin: 0 4px;
+    font-family: Arial, sans-serif;
+}
+
+.ad-multicol {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.ad-multicol .ad-col {
+    flex: 1;
+    min-width: 0;
 } 
