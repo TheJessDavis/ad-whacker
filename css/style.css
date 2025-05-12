@@ -233,14 +233,15 @@ body {
     transition: transform 0.1s;
     image-rendering: pixelated;
     min-width: 200px;
-    min-height: 150px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
     background: linear-gradient(45deg, #fff 0%, #f0f0f0 100%);
     border: 3px solid #000;
     animation: pop-in 0.3s ease-out;
+    overflow: hidden;
 }
 
 @keyframes pop-in {
@@ -259,36 +260,108 @@ body {
     box-shadow: 6px 6px 0 #000;
 }
 
-.ad-popup .close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 24px;
-    height: 24px;
-    background-color: #f00;
-    border: 2px solid #000;
-    cursor: pointer;
+.ad-titlebar {
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 14px;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #3a6ea5 0%, #b0c4de 100%);
     color: #fff;
-    transition: all 0.2s;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    padding: 2px 8px;
+    height: 22px;
+    border-bottom: 2px solid #222;
+    user-select: none;
 }
 
-.ad-popup .close-button:hover {
-    background-color: #ff0000;
-    transform: scale(1.1);
+.ad-titlebar.gray {
+    background: linear-gradient(90deg, #b0b0b0 0%, #e0e0e0 100%);
+    color: #222;
 }
 
-.ad-popup .ad-content {
-    margin-top: 20px;
+.ad-titlebar .ad-icon {
+    margin-right: 6px;
+    font-size: 15px;
+}
+
+.ad-titlebar .ad-title {
+    flex: 1;
+    font-weight: bold;
+    font-size: 13px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ad-titlebar .close-button {
+    position: static;
+    width: 18px;
+    height: 18px;
+    background: #c00;
+    border: 1.5px solid #fff;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    margin-right: 0;
+    transition: background 0.2s;
+}
+
+.ad-titlebar .close-button:hover {
+    background: #ff2222;
+}
+
+.ad-content {
+    margin: 10px 0 0 0;
     text-align: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid #000;
+    padding: 8px;
+    background: rgba(255,255,255,0.95);
     border-radius: 4px;
-    width: 90%;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #222;
+}
+
+.ad-content.yellow {
+    background: #fffbe0;
+    color: #222;
+    border: 1.5px solid #ffe066;
+}
+
+.ad-content.blue {
+    background: #e6f0ff;
+    color: #003366;
+    border: 1.5px solid #3a6ea5;
+}
+
+.ad-content.green {
+    background: #eaffea;
+    color: #225522;
+    border: 1.5px solid #66ff66;
+}
+
+.ad-fake-btn {
+    display: inline-block;
+    margin: 8px 4px 0 4px;
+    padding: 4px 12px;
+    background: linear-gradient(180deg, #f7f7f7 0%, #d0d0d0 100%);
+    border: 2px outset #bbb;
+    border-radius: 3px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #222;
+    cursor: pointer;
+    box-shadow: 1px 1px 0 #888;
+    transition: background 0.2s;
+}
+
+.ad-fake-btn:hover {
+    background: #ffe066;
+    color: #000;
+    border: 2px inset #bbb;
 }
 
 .game-title {
