@@ -385,27 +385,68 @@ body {
 }
 
 .game-title {
-    font-family: 'BoomComic', 'Press Start 2P', cursive;
-    font-size: 72px;
-    color: #ff00cc;
-    text-shadow:
-        0 2px 8px #00ffff,
-        0 4px 16px #0066ff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 90px;
+    font-weight: bold;
+    font-style: italic;
+    color: #ffb300;
     text-align: center;
-    margin: 40px auto;
-    padding: 20px;
-    letter-spacing: 4px;
-    background: linear-gradient(90deg, #ff00cc 0%, #00ffff 40%, #0066ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 16px #0000ff);
-    animation: title-glow 2s infinite alternate, title-rainbow 6s linear infinite;
-    position: relative;
-    z-index: 10;
+    margin: 40px auto 0 auto;
+    padding: 20px 0 10px 0;
+    letter-spacing: 2px;
     width: 100%;
     display: block;
-    transform: rotate(-2deg);
+    position: relative;
+    z-index: 10;
+    animation: float-title 2.5s ease-in-out infinite alternate;
+    background-clip: initial;
+    /* Multi-color neon outline */
+    text-shadow:
+        0 0 0 #fff,
+        2px 2px 0 #a14100,
+        4px 4px 0 #a14100,
+        0 4px 0 #00e6ff,
+        0 8px 0 #ff00de,
+        0 12px 0 #ffe066,
+        0 16px 0 #001a66,
+        6px 8px 0 #a14100,
+        0 2px 0 #fff2,
+        2px 2px 0 #a14100,
+        4px 4px 0 #a14100;
+    transform: skew(-6deg, -2deg) rotate(-4deg) scale(1.05,1);
+    overflow: visible;
+}
+
+.game-title::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 110%;
+    height: 90%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    border-radius: 40%;
+    filter: blur(32px);
+    opacity: 0.85;
+    background: linear-gradient(270deg, #00e6ff, #ff00de, #ffe066, #001a66, #00e6ff);
+    background-size: 400% 400%;
+    animation: glow-rainbow 6s linear infinite;
+}
+
+@keyframes glow-rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float-title {
+    0% {
+        transform: skew(-6deg, -2deg) rotate(-4deg) scale(1.05,1) translateY(0);
+    }
+    100% {
+        transform: skew(-6deg, -2deg) rotate(-4deg) scale(1.05,1) translateY(-18px);
+    }
 }
 
 @keyframes title-glow {
