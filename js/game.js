@@ -19,6 +19,8 @@ class AdWhacker {
         this.lastBlockTimestamp = 0;
         this.comboActive = false;
         this.lastBlockedAd = null;
+        this.streakCount = 0;
+        this.currentSpawnRate = 500; // Base spawn rate in ms
         // Sound effects
         this.popSound = new Audio('sounds/imrcv.wav');
         this.popSound.volume = 1.0;
@@ -55,17 +57,17 @@ class AdWhacker {
         this.frameBuffer = [];
         this.frameInterval = null;
         
-        // Create combo counter
-        this.comboCounter = document.createElement('div');
-        this.comboCounter.className = 'combo-counter';
-        this.comboCounter.style.position = 'absolute';
-        this.comboCounter.style.top = '10px';
-        this.comboCounter.style.right = '10px';
-        this.comboCounter.style.color = '#ffe066';
-        this.comboCounter.style.fontSize = '24px';
-        this.comboCounter.style.textShadow = '2px 2px #ff00de';
-        this.comboCounter.style.display = 'none';
-        this.gameArea.appendChild(this.comboCounter);
+        // Create streak counter
+        this.streakCounter = document.createElement('div');
+        this.streakCounter.className = 'streak-counter';
+        this.streakCounter.style.position = 'absolute';
+        this.streakCounter.style.top = '10px';
+        this.streakCounter.style.right = '10px';
+        this.streakCounter.style.color = '#ffe066';
+        this.streakCounter.style.fontSize = '24px';
+        this.streakCounter.style.textShadow = '2px 2px #ff00de';
+        this.streakCounter.style.display = 'none';
+        this.gameArea.appendChild(this.streakCounter);
         
         // Create floppy disc
         this.floppyDisc = document.createElement('div');
@@ -120,7 +122,7 @@ class AdWhacker {
         this.updateScoreDisplay(0);
         this.timerElement.textContent = this.timeLeft;
         this.lastBlockTimestamp = 0;
-        this.comboCount = 0;
+        this.streakCount = 0;
         this.comboActive = false;
         // Start capturing frames for GIF preview
         this.frameBuffer = [];
@@ -165,8 +167,25 @@ class AdWhacker {
         console.log('Spawning ad! Game state:', {
             gameActive: this.gameActive,
             score: this.score,
-            activeAds: this.activeAds.size
+            activeAds: this.activeAds.size,
+            streakCount: this.streakCount
         });
+
+        // Calculate spawn rate based on streak
+        let spawnRate = 500; // Base spawn rate in ms
+        if (this.streakCount >= 10) {
+            // Gradually decrease spawn rate as streak increases
+            spawnRate = Math.max(200, 500 - (this.streakCount - 10) * 20);
+        }
+
+        // Update the spawn interval if it's different
+        if (this.currentSpawnRate !== spawnRate) {
+            this.currentSpawnRate = spawnRate;
+            clearInterval(this.adInterval);
+            this.adInterval = setInterval(() => this.spawnAd(), spawnRate);
+            console.log('Updated spawn rate:', spawnRate);
+        }
+
         // --- 20 Unique Ad style templates ---
         const adStyles = [
             // 1. Congratulations banner with checklist and starburst
@@ -713,39 +732,37 @@ class AdWhacker {
         }
         this.lastBlockedAd = ad;
         
-        // Update combo state
-        let comboContinues = false;
+        // Update streak state
         if (!this.comboActive || elapsed > window) {
-            this.comboCount = 1;
+            this.streakCount = 1;
             this.comboActive = true;
-            console.log('New combo started');
+            console.log('New streak started');
         } else {
-            this.comboCount++;
-            comboContinues = true;
-            console.log('Combo continued:', this.comboCount);
+            this.streakCount++;
+            console.log('Streak continued:', this.streakCount);
         }
         this.lastBlockTimestamp = now;
         
-        // Update combo counter display
-        if (this.comboCount > 1) {
-            this.comboCounter.textContent = `${this.comboCount}x COMBO!`;
-            this.comboCounter.style.display = 'block';
-            // Flash the floppy disc
+        // Update streak counter display
+        if (this.streakCount >= 10) {
+            this.streakCounter.innerHTML = `${this.streakCount} 🔥`;
+            this.streakCounter.style.display = 'block';
+            // Show and spin the floppy disc
             this.floppyDisc.style.display = 'block';
             this.floppyDisc.style.animation = 'none';
             this.floppyDisc.offsetHeight; // Force reflow
             this.floppyDisc.style.animation = 'floppy-spin 0.5s ease-out';
         } else {
-            this.comboCounter.style.display = 'none';
+            this.streakCounter.style.display = 'none';
             this.floppyDisc.style.display = 'none';
         }
         
-        // Scoring: +1 per ad, +10 every 5th in a row
+        // Scoring: +1 per ad, +10 every 10th in a row
         let pointsEarned = 1;
-        if (this.comboCount % 5 === 0) {
+        if (this.streakCount % 10 === 0) {
             pointsEarned += 10;
             this.showComboPopup(adCenterX, adCenterY);
-            console.log('Combo bonus! +10 points');
+            console.log('Streak bonus! +10 points');
         }
         
         // Update score
@@ -755,7 +772,7 @@ class AdWhacker {
             oldScore,
             pointsEarned,
             newScore: this.score,
-            comboCount: this.comboCount,
+            streakCount: this.streakCount,
             gameActive: this.gameActive
         });
         

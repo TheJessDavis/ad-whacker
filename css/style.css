@@ -926,4 +926,22 @@ body {
     padding: 4px 18px;
     cursor: pointer;
     margin-left: 8px;
+}
+
+@keyframes floppy-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.floppy-disc {
+    transition: all 0.3s ease;
+}
+
+.floppy-disc:hover {
+    transform: scale(1.1);
+    cursor: pointer;
 } 
