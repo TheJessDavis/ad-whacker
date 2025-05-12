@@ -68,8 +68,8 @@ class AdWhacker {
         this.startButton.style.display = 'none';
         this.scoreElement.textContent = this.score;
         this.timerElement.textContent = this.timeLeft;
-        this.multiplierBadge.style.display = 'block';
-        this.comboResetButton.style.display = 'block';
+        this.multiplierBadge.style.display = 'none';
+        this.comboResetButton.style.display = 'none';
         this.updateMultiplierDisplay(1);
         this.lastBlockTimestamp = 0;
         this.comboCount = 0;
@@ -645,13 +645,16 @@ class AdWhacker {
             // Multiplier only increases every 5 in a row
             const multiplier = Math.floor(this.comboCount / 5);
             this.updateMultiplierDisplay(multiplier < 1 ? 1 : multiplier);
-            // Scoring
+            // Scoring: always at least 1 point per ad
             let pointsEarned = 1;
-            if (multiplier >= 1) {
+            if (multiplier > 0) {
                 pointsEarned += 10 * multiplier;
             }
             this.score += pointsEarned;
             this.scoreElement.textContent = this.score;
+            // Always show badge/floppy for clarity
+            this.multiplierBadge.style.display = 'block';
+            this.comboResetButton.style.display = 'block';
             // TODO: Combo trail, screen shake, etc.
         }
     }
@@ -669,10 +672,15 @@ class AdWhacker {
             this.scoreElement.textContent = this.score;
             this.comboBonusBanked += bonus;
             this.showComboBonus(bonus, multiplier);
+            // Flash badge
+            this.multiplierBadge.style.background = '#fff';
+            setTimeout(() => this.updateMultiplierDisplay(multiplier), 200);
         }
         this.comboCount = 0;
         this.comboActive = false;
         this.updateMultiplierDisplay(1);
+        this.multiplierBadge.style.display = 'none';
+        this.comboResetButton.style.display = 'none';
     }
 
     updateMultiplierDisplay(multiplier) {
