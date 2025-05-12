@@ -10,18 +10,54 @@ class AdWhacker {
         this.adInterval = null;
         this.timerInterval = null;
         this.activeAds = new Set();
-        this.streak = 0;  // Track consecutive ad whacks
-
+        // Combo system
+        this.comboCount = 0;
+        this.lastBlockTimestamp = 0;
+        this.comboActive = false;
+        this.comboBonusBanked = 0;
         // Sound effects
         this.popSound = new Audio('sounds/imrcv.wav');
         this.popSound.volume = 1.0; // Set volume to 100%
-
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
         this.scoreElement = document.getElementById('score');
         this.timerElement = document.getElementById('timer');
         this.startButton = document.getElementById('startButton');
-
+        // Multiplier badge
+        this.multiplierBadge = document.createElement('div');
+        this.multiplierBadge.className = 'multiplier-badge';
+        this.multiplierBadge.style.position = 'absolute';
+        this.multiplierBadge.style.top = '16px';
+        this.multiplierBadge.style.right = '32px';
+        this.multiplierBadge.style.zIndex = '1001';
+        this.multiplierBadge.style.display = 'none';
+        this.multiplierBadge.style.fontFamily = "'Press Start 2P', cursive";
+        this.multiplierBadge.style.fontSize = '32px';
+        this.multiplierBadge.style.padding = '10px 24px';
+        this.multiplierBadge.style.borderRadius = '18px';
+        this.multiplierBadge.style.border = '3px solid #fff';
+        this.multiplierBadge.style.boxShadow = '0 0 16px #ff00de, 0 0 32px #00e6ff';
+        this.multiplierBadge.style.background = 'rgba(0,0,0,0.7)';
+        this.multiplierBadge.style.transition = 'background 0.2s, color 0.2s, transform 0.2s';
+        document.body.appendChild(this.multiplierBadge);
+        // Combo Reset button
+        this.comboResetButton = document.createElement('button');
+        this.comboResetButton.innerHTML = '💾';
+        this.comboResetButton.title = 'Combo Reset (Bank Bonus)';
+        this.comboResetButton.className = 'combo-reset-btn';
+        this.comboResetButton.style.position = 'absolute';
+        this.comboResetButton.style.top = '70px';
+        this.comboResetButton.style.right = '32px';
+        this.comboResetButton.style.zIndex = '1002';
+        this.comboResetButton.style.fontSize = '28px';
+        this.comboResetButton.style.background = '#222';
+        this.comboResetButton.style.color = '#ffe066';
+        this.comboResetButton.style.border = '2px solid #fff';
+        this.comboResetButton.style.borderRadius = '10px';
+        this.comboResetButton.style.cursor = 'pointer';
+        this.comboResetButton.style.display = 'none';
+        document.body.appendChild(this.comboResetButton);
+        this.comboResetButton.onclick = () => this.bankComboBonus();
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
     }
@@ -32,6 +68,13 @@ class AdWhacker {
         this.startButton.style.display = 'none';
         this.scoreElement.textContent = this.score;
         this.timerElement.textContent = this.timeLeft;
+        this.multiplierBadge.style.display = 'block';
+        this.comboResetButton.style.display = 'block';
+        this.updateMultiplierDisplay(1);
+        this.lastBlockTimestamp = 0;
+        this.comboCount = 0;
+        this.comboActive = false;
+        this.comboBonusBanked = 0;
         console.log('Game started!');
 
         // Always clear intervals before setting new ones
@@ -49,12 +92,15 @@ class AdWhacker {
         this.score = 0;
         this.timeLeft = 30;
         this.gameActive = false;
-        this.streak = 0;
+        this.comboCount = 0;
+        this.comboActive = false;
+        this.comboBonusBanked = 0;
         this.scoreElement.textContent = '0';
         this.timerElement.textContent = '30';
         this.gameArea.innerHTML = '';
         this.activeAds.clear();
-        
+        this.multiplierBadge.style.display = 'none';
+        this.comboResetButton.style.display = 'none';
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
         console.log('Game reset!');
@@ -556,8 +602,12 @@ class AdWhacker {
     disappearAd(ad) {
         if (this.activeAds.has(ad)) {
             ad.classList.add('disappearing');
-            // Reset streak when ad disappears without being clicked
-            this.streak = 0;
+            // Combo break if missed
+            if (this.comboActive && this.comboCount > 1) {
+                this.bankComboBonus();
+            }
+            this.comboActive = false;
+            this.comboCount = 0;
             // Remove the ad after the animation completes
             setTimeout(() => {
                 if (this.activeAds.has(ad)) {
@@ -573,38 +623,96 @@ class AdWhacker {
             // Play pop sound
             this.popSound.currentTime = 0; // Reset sound to start
             this.popSound.play().catch(e => console.log('Sound play failed:', e));
-            
             // Use disappearAd for animation, then remove
             this.disappearAd(ad);
-            // Score logic only if user closed (not auto-disappear)
-            this.streak++;
-            let points = 1;
-            if (this.streak >= 10) {
-                points += 1;
-                this.showStreakBonus();
+            // Combo logic
+            const now = performance.now();
+            let elapsed = now - (this.lastBlockTimestamp || now);
+            let window = this.getComboWindow(this.comboCount);
+            // Buffering: if two ads blocked within 50ms, count as one
+            if (elapsed < 50) return;
+            if (!this.comboActive || elapsed > window) {
+                // Combo broken or first hit
+                if (this.comboActive && this.comboCount > 1) {
+                    this.bankComboBonus();
+                }
+                this.comboCount = 1;
+                this.comboActive = true;
+            } else {
+                this.comboCount++;
             }
-            this.score += points;
+            this.lastBlockTimestamp = now;
+            this.updateMultiplierDisplay(this.comboCount);
+            // Scoring
+            const baseAdValue = 10;
+            const pointsEarned = baseAdValue * this.comboCount;
+            this.score += pointsEarned;
             this.scoreElement.textContent = this.score;
-            console.log('Ad closed! Score:', this.score, 'Streak:', this.streak);
+            // TODO: Combo trail, screen shake, etc.
         }
     }
 
-    showStreakBonus() {
-        const bonus = document.createElement('div');
-        bonus.className = 'streak-bonus';
-        bonus.textContent = '+1 STREAK BONUS!';
-        bonus.style.position = 'absolute';
-        bonus.style.top = '50%';
-        bonus.style.left = '50%';
-        bonus.style.transform = 'translate(-50%, -50%)';
-        bonus.style.color = '#ff0';
-        bonus.style.fontSize = '24px';
-        bonus.style.textShadow = '2px 2px #f00';
-        bonus.style.animation = 'bonus-pop 0.5s ease-out forwards';
-        this.gameArea.appendChild(bonus);
-        
-        // Remove the bonus message after animation
-        setTimeout(() => bonus.remove(), 500);
+    getComboWindow(count) {
+        if (count === 0) return 2000; // initial grace
+        return 1200 * Math.pow(0.95, count - 1); // decaying window
+    }
+
+    bankComboBonus() {
+        if (this.comboCount > 1) {
+            const bonus = 50 * (this.comboCount - 1);
+            this.score += bonus;
+            this.scoreElement.textContent = this.score;
+            this.comboBonusBanked += bonus;
+            this.showComboBonus(bonus);
+        }
+        this.comboCount = 0;
+        this.comboActive = false;
+        this.updateMultiplierDisplay(1);
+    }
+
+    updateMultiplierDisplay(count) {
+        if (count <= 1) {
+            this.multiplierBadge.textContent = '×1';
+            this.multiplierBadge.style.background = 'rgba(0,0,0,0.7)';
+            this.multiplierBadge.style.color = '#fff';
+            this.multiplierBadge.style.boxShadow = '0 0 16px #ff00de, 0 0 32px #00e6ff';
+        } else if (count < 5) {
+            this.multiplierBadge.textContent = `×${count}`;
+            this.multiplierBadge.style.background = 'linear-gradient(90deg,#ff00de,#ffe066)';
+            this.multiplierBadge.style.color = '#fff';
+            this.multiplierBadge.style.boxShadow = '0 0 24px #ff00de, 0 0 32px #ffe066';
+        } else if (count < 10) {
+            this.multiplierBadge.textContent = `×${count}`;
+            this.multiplierBadge.style.background = 'linear-gradient(90deg,#00e6ff,#ff00de)';
+            this.multiplierBadge.style.color = '#fff';
+            this.multiplierBadge.style.boxShadow = '0 0 32px #00e6ff, 0 0 32px #ff00de';
+        } else {
+            this.multiplierBadge.textContent = `×${count}`;
+            this.multiplierBadge.style.background = 'linear-gradient(90deg,#ffe066,#ff6600)';
+            this.multiplierBadge.style.color = '#fff';
+            this.multiplierBadge.style.boxShadow = '0 0 40px #ff6600, 0 0 40px #ffe066';
+        }
+        // Bounce effect
+        this.multiplierBadge.style.transform = 'scale(1.25)';
+        setTimeout(() => {
+            this.multiplierBadge.style.transform = 'scale(1)';
+        }, 180);
+    }
+
+    showComboBonus(bonus) {
+        const bonusDiv = document.createElement('div');
+        bonusDiv.className = 'streak-bonus';
+        bonusDiv.textContent = `+${bonus} COMBO BONUS!`;
+        bonusDiv.style.position = 'absolute';
+        bonusDiv.style.top = '50%';
+        bonusDiv.style.left = '50%';
+        bonusDiv.style.transform = 'translate(-50%, -50%)';
+        bonusDiv.style.color = '#ffe066';
+        bonusDiv.style.fontSize = '28px';
+        bonusDiv.style.textShadow = '2px 2px #ff00de, 2px 2px #00e6ff';
+        bonusDiv.style.animation = 'bonus-pop 0.7s ease-out forwards';
+        this.gameArea.appendChild(bonusDiv);
+        setTimeout(() => bonusDiv.remove(), 700);
     }
 
     updateTimer() {
