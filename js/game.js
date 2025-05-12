@@ -23,6 +23,11 @@ class AdWhacker {
         // DOM elements
         this.gameArea = document.getElementById('gameArea');
         this.scoreElement = document.getElementById('score');
+        if (!this.scoreElement) {
+            // fallback: try querySelector
+            this.scoreElement = document.querySelector('#score');
+            console.log('Fallback: scoreElement found?', !!this.scoreElement);
+        }
         this.timerElement = document.getElementById('timer');
         this.startButton = document.getElementById('startButton');
         // Bind event listeners
@@ -592,7 +597,6 @@ class AdWhacker {
             if (elapsed < 50) return;
             let comboContinues = false;
             if (!this.comboActive || elapsed > window) {
-                // Combo broken or first hit
                 this.comboCount = 1;
                 this.comboActive = true;
             } else {
@@ -607,7 +611,12 @@ class AdWhacker {
                 this.showComboPopup(adCenterX, adCenterY);
             }
             this.score += pointsEarned;
-            this.scoreElement.textContent = this.score;
+            console.log('closeAd called, score:', this.score, 'pointsEarned:', pointsEarned);
+            if (this.scoreElement) {
+                this.scoreElement.textContent = this.score;
+            } else {
+                console.error('scoreElement not found!');
+            }
             this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
         }
     }
@@ -705,8 +714,8 @@ class AdWhacker {
         this.gameArea.appendChild(gameOver);
         // Show start button again
         this.startButton.style.display = 'block';
-        // Generate GIF and show leaderboard after a short delay
-        setTimeout(() => this.generateGifPreview(() => this.showLeaderboardModal()), 1200);
+        // Disabled: leaderboard and GIF preview
+        // setTimeout(() => this.generateGifPreview(() => this.showLeaderboardModal()), 1200);
         console.log('Game over! Final Score:', this.score);
     }
 
