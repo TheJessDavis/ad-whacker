@@ -144,7 +144,7 @@ class AdWhacker {
         this.score = 0;
         this.timeLeft = 30;
         this.gameActive = false;
-        this.comboCount = 0;
+        this.streakCount = 0;
         this.comboActive = false;
         this.updateScoreDisplay(0);
         this.timerElement.textContent = '30';
@@ -152,10 +152,14 @@ class AdWhacker {
         this.activeAds.clear();
         if (this.adInterval) clearInterval(this.adInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
+        // Reset streak counter and floppy disc
+        this.streakCounter.style.display = 'none';
+        this.floppyDisc.style.display = 'none';
         console.log('Game reset complete, state:', {
             score: this.score,
             gameActive: this.gameActive,
-            activeAds: this.activeAds.size
+            activeAds: this.activeAds.size,
+            streakCount: this.streakCount
         });
     }
 
@@ -733,18 +737,23 @@ class AdWhacker {
         this.lastBlockedAd = ad;
         
         // Update streak state
-        if (!this.comboActive || elapsed > window) {
+        if (elapsed > window) {
+            // Reset streak if too much time has passed
             this.streakCount = 1;
             this.comboActive = true;
-            console.log('New streak started');
+            console.log('New streak started - time window exceeded');
         } else {
+            // Increment streak if within time window
             this.streakCount++;
+            this.comboActive = true;
             console.log('Streak continued:', this.streakCount);
         }
         this.lastBlockTimestamp = now;
         
         // Update streak counter display
+        console.log('Current streak count:', this.streakCount);
         if (this.streakCount >= 10) {
+            console.log('Showing streak counter for streak:', this.streakCount);
             this.streakCounter.innerHTML = `${this.streakCount} 🔥`;
             this.streakCounter.style.display = 'block';
             // Show and spin the floppy disc
@@ -753,6 +762,7 @@ class AdWhacker {
             this.floppyDisc.offsetHeight; // Force reflow
             this.floppyDisc.style.animation = 'floppy-spin 0.5s ease-out';
         } else {
+            console.log('Hiding streak counter - streak too low:', this.streakCount);
             this.streakCounter.style.display = 'none';
             this.floppyDisc.style.display = 'none';
         }
