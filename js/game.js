@@ -55,6 +55,32 @@ class AdWhacker {
         this.frameBuffer = [];
         this.frameInterval = null;
         
+        // Create combo counter
+        this.comboCounter = document.createElement('div');
+        this.comboCounter.className = 'combo-counter';
+        this.comboCounter.style.position = 'absolute';
+        this.comboCounter.style.top = '10px';
+        this.comboCounter.style.right = '10px';
+        this.comboCounter.style.color = '#ffe066';
+        this.comboCounter.style.fontSize = '24px';
+        this.comboCounter.style.textShadow = '2px 2px #ff00de';
+        this.comboCounter.style.display = 'none';
+        this.gameArea.appendChild(this.comboCounter);
+        
+        // Create floppy disc
+        this.floppyDisc = document.createElement('div');
+        this.floppyDisc.className = 'floppy-disc';
+        this.floppyDisc.style.position = 'absolute';
+        this.floppyDisc.style.bottom = '10px';
+        this.floppyDisc.style.right = '10px';
+        this.floppyDisc.style.width = '40px';
+        this.floppyDisc.style.height = '40px';
+        this.floppyDisc.style.background = '#333';
+        this.floppyDisc.style.border = '2px solid #666';
+        this.floppyDisc.style.borderRadius = '4px';
+        this.floppyDisc.style.display = 'none';
+        this.gameArea.appendChild(this.floppyDisc);
+        
         // Initialize score display
         this.updateScoreDisplay(0);
         console.log('AdWhacker initialization complete');
@@ -700,6 +726,20 @@ class AdWhacker {
         }
         this.lastBlockTimestamp = now;
         
+        // Update combo counter display
+        if (this.comboCount > 1) {
+            this.comboCounter.textContent = `${this.comboCount}x COMBO!`;
+            this.comboCounter.style.display = 'block';
+            // Flash the floppy disc
+            this.floppyDisc.style.display = 'block';
+            this.floppyDisc.style.animation = 'none';
+            this.floppyDisc.offsetHeight; // Force reflow
+            this.floppyDisc.style.animation = 'floppy-spin 0.5s ease-out';
+        } else {
+            this.comboCounter.style.display = 'none';
+            this.floppyDisc.style.display = 'none';
+        }
+        
         // Scoring: +1 per ad, +10 every 5th in a row
         let pointsEarned = 1;
         if (this.comboCount % 5 === 0) {
@@ -721,55 +761,6 @@ class AdWhacker {
         
         // Update score display
         this.updateScoreDisplay(this.score);
-        
-        // Visual feedback
-        this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
-    }
-
-    spawnStarTrail(x, y, comboContinues) {
-        const starCount = 7;
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.className = 'star-trail';
-            star.style.left = `${x + (Math.random() - 0.5) * 40}px`;
-            star.style.top = `${y + (Math.random() - 0.5) * 40}px`;
-            star.style.position = 'absolute';
-            star.style.zIndex = 2000;
-            star.style.pointerEvents = 'none';
-            star.innerHTML = '★';
-            this.gameArea.appendChild(star);
-            // Animate
-            if (comboContinues) {
-                // Animate toward badge
-                const badge = this.multiplierBadge;
-                const badgeRect = badge.getBoundingClientRect();
-                const gameRect = this.gameArea.getBoundingClientRect();
-                const badgeX = badgeRect.left + badgeRect.width / 2 - gameRect.left;
-                const badgeY = badgeRect.top + badgeRect.height / 2 - gameRect.top;
-                setTimeout(() => {
-                    star.style.transition = 'all 0.5s cubic-bezier(.7,-0.2,.7,1.5)';
-                    star.style.left = `${badgeX}px`;
-                    star.style.top = `${badgeY}px`;
-                    star.style.opacity = 0;
-                    star.style.transform = 'scale(1.8)';
-                }, 10);
-                setTimeout(() => {
-                    star.remove();
-                    // Flash badge when last star arrives
-                    if (i === starCount - 1) {
-                        this.multiplierBadge.classList.add('badge-flash');
-                        setTimeout(() => this.multiplierBadge.classList.remove('badge-flash'), 180);
-                    }
-                }, 520 + i * 20);
-            } else {
-                // Just fade out
-                setTimeout(() => {
-                    star.style.transition = 'opacity 0.4s';
-                    star.style.opacity = 0;
-                }, 10);
-                setTimeout(() => star.remove(), 410 + i * 10);
-            }
-        }
     }
 
     showComboPopup(x, y) {
