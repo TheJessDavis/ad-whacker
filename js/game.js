@@ -468,19 +468,15 @@ class AdWhacker {
 
     closeAd(ad) {
         if (this.activeAds.has(ad)) {
-            this.activeAds.delete(ad);
-            ad.remove();
-            
-            // Update streak and score
+            // Use disappearAd for animation, then remove
+            this.disappearAd(ad);
+            // Score logic only if user closed (not auto-disappear)
             this.streak++;
-            let points = 1; // Base point for whacking an ad
-            
-            // Check for streak bonus
+            let points = 1;
             if (this.streak >= 10) {
-                points += 1; // Extra point for 10+ streak
+                points += 1;
                 this.showStreakBonus();
             }
-            
             this.score += points;
             this.scoreElement.textContent = this.score;
             console.log('Ad closed! Score:', this.score, 'Streak:', this.streak);
