@@ -60,52 +60,129 @@ class AdWhacker {
         if (!this.gameActive) return;
         console.log('Spawning ad!');
 
-        const ad = document.createElement('div');
-        ad.className = 'ad-popup';
-        
+        // --- Ad style templates ---
+        const adStyles = [
+            // Classic blue title bar, white content, fake button
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${180 + Math.random() * 120}px`;
+                ad.style.height = `${100 + Math.random() * 80}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar';
+                titlebar.innerHTML = `<span class='ad-icon'>🖥️</span><span class='ad-title'>Advertisement</span>`;
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                ad.appendChild(titlebar);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content';
+                content.innerHTML = `<b>WIN a FREE PRIZE!</b><br>Click below to claim.<br><span class='ad-fake-btn'>Click Here!</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // Yellow info bar, blue content, left close button
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${200 + Math.random() * 100}px`;
+                ad.style.height = `${110 + Math.random() * 60}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar gray';
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                const title = document.createElement('span');
+                title.className = 'ad-title';
+                title.textContent = 'Special Offer!';
+                titlebar.appendChild(title);
+                ad.appendChild(titlebar);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `Upgrade now and save 70%!<br><span class='ad-fake-btn'>Upgrade</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // Green info bar, blue content, emoji icon
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${170 + Math.random() * 120}px`;
+                ad.style.height = `${100 + Math.random() * 70}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar';
+                titlebar.innerHTML = `<span class='ad-icon'>💾</span><span class='ad-title'>Internet Explorer</span>`;
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                ad.appendChild(titlebar);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content blue';
+                content.innerHTML = `You are the <b>1,000,000th</b> visitor!<br><span class='ad-fake-btn'>Claim Prize</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // Simple white with green border, big text
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${160 + Math.random() * 100}px`;
+                ad.style.height = `${90 + Math.random() * 60}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar gray';
+                titlebar.innerHTML = `<span class='ad-title'>System Alert</span>`;
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                ad.appendChild(titlebar);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content green';
+                content.innerHTML = `<b>Virus Detected!</b><br>Scan now.<br><span class='ad-fake-btn'>Scan</span>`;
+                ad.appendChild(content);
+                return ad;
+            }
+        ];
+
+        // Pick a random ad style
+        const ad = adStyles[Math.floor(Math.random() * adStyles.length)]();
+
         // Random position within game area
-        const maxX = this.gameArea.clientWidth - 200;
-        const maxY = this.gameArea.clientHeight - 150;
+        const maxX = this.gameArea.clientWidth - ad.offsetWidth;
+        const maxY = this.gameArea.clientHeight - ad.offsetHeight;
         ad.style.left = `${Math.random() * maxX}px`;
         ad.style.top = `${Math.random() * maxY}px`;
 
-        // Random 90s-style ad content
-        const adTemplates = [
-            'FREE DIAL-UP INTERNET!',
-            'YOU\'VE WON A PRIZE!',
-            'CLICK HERE TO WIN!',
-            'FREE VIRUS SCAN!',
-            'DOWNLOAD NOW!',
-            'CONGRATULATIONS!',
-            'SPECIAL OFFER!',
-            'CLICK FOR FREE GAMES!',
-            'FREE SCREENSAVER!',
-            'YOU\'RE THE 1,000,000TH VISITOR!',
-            'CLICK TO CLAIM YOUR PRIZE!',
-            'FREE WALLPAPER DOWNLOAD!'
-        ];
-
-        const closeButton = document.createElement('div');
-        closeButton.className = 'close-button';
-        closeButton.textContent = 'X';
-        closeButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.closeAd(ad);
-        });
-
-        const adContent = document.createElement('div');
-        adContent.className = 'ad-content';
-        adContent.textContent = adTemplates[Math.floor(Math.random() * adTemplates.length)];
-
-        // Make the entire ad clickable
+        // Make the entire ad clickable (except the close button)
         ad.addEventListener('click', (e) => {
-            if (e.target === ad || e.target === adContent) {
+            if (e.target === ad || e.target.classList.contains('ad-content') || e.target.classList.contains('ad-fake-btn')) {
                 this.closeAd(ad);
             }
         });
 
-        ad.appendChild(closeButton);
-        ad.appendChild(adContent);
         this.gameArea.appendChild(ad);
         this.activeAds.add(ad);
 
