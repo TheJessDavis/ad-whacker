@@ -62,17 +62,102 @@ class AdWhacker {
 
         // --- Ad style templates ---
         const adStyles = [
-            // Classic blue title bar, white content, fake button
+            // 1. Classic browser window with address bar, banner, and input
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
-                ad.style.width = `${180 + Math.random() * 120}px`;
-                ad.style.height = `${100 + Math.random() * 80}px`;
+                ad.style.width = `${260 + Math.random() * 60}px`;
+                ad.style.height = `${180 + Math.random() * 40}px`;
+
+                // Browser chrome
+                const chrome = document.createElement('div');
+                chrome.className = 'ad-browser-chrome';
+                chrome.innerHTML = `
+                    <span class='ad-browser-btn back'></span>
+                    <span class='ad-browser-btn fwd'></span>
+                    <span class='ad-browser-btn reload'></span>
+                    <span class='ad-browser-url'><span class='ad-browser-lock'>🔒</span>http://www.travelzoo.com</span>
+                `;
+                ad.appendChild(chrome);
 
                 // Title bar
                 const titlebar = document.createElement('div');
                 titlebar.className = 'ad-titlebar';
-                titlebar.innerHTML = `<span class='ad-icon'>🖥️</span><span class='ad-title'>Advertisement</span>`;
+                titlebar.innerHTML = `<span class='ad-icon'>🌐</span><span class='ad-title'>Travelzoo Top 20</span>`;
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                ad.appendChild(titlebar);
+
+                // Banner
+                const banner = document.createElement('div');
+                banner.className = 'ad-banner';
+                banner.textContent = 'The Top 20 Travel Deals on the Web!';
+                ad.appendChild(banner);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content yellow';
+                content.innerHTML = `
+                    Specials <span class='ad-bold'>handpicked every week</span> from over 200 sites.<br>
+                    <span class='ad-underline'>Interested in Deals Like These?</span><br>
+                    <span class='ad-small'>• Europe Sale Round Trip<br>• Count $100s off Hotels</span>
+                    <div class='ad-input-row'><input class='ad-fake-input' placeholder='Email'><span class='ad-fake-btn big'>Sign Up</span></div>
+                `;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 2. Ad with image, blue content, and fake button
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${220 + Math.random() * 60}px`;
+                ad.style.height = `${150 + Math.random() * 40}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar';
+                titlebar.innerHTML = `<span class='ad-icon'>🖼️</span><span class='ad-title'>Surveillance Alert</span>`;
+                const closeBtn = document.createElement('div');
+                closeBtn.className = 'close-button';
+                closeBtn.textContent = 'X';
+                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
+                titlebar.appendChild(closeBtn);
+                ad.appendChild(titlebar);
+
+                // Banner
+                const banner = document.createElement('div');
+                banner.className = 'ad-banner';
+                banner.textContent = 'Make Your Home Safe And Secure';
+                ad.appendChild(banner);
+
+                // Image
+                const img = document.createElement('img');
+                img.className = 'ad-img';
+                img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Surveillance_camera.svg/120px-Surveillance_camera.svg.png';
+                img.alt = 'Surveillance';
+                ad.appendChild(img);
+
+                // Content
+                const content = document.createElement('div');
+                content.className = 'ad-content blue';
+                content.innerHTML = `Broadcasts Live Color Video Directly To Your TV, VCR or PC<br><span class='ad-fake-btn'>Click Here</span>`;
+                ad.appendChild(content);
+                return ad;
+            },
+            // 3. System alert with input and two buttons
+            () => {
+                const ad = document.createElement('div');
+                ad.className = 'ad-popup';
+                ad.style.width = `${200 + Math.random() * 60}px`;
+                ad.style.height = `${120 + Math.random() * 40}px`;
+
+                // Title bar
+                const titlebar = document.createElement('div');
+                titlebar.className = 'ad-titlebar gray';
+                titlebar.innerHTML = `<span class='ad-title'>Message Alert</span>`;
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
@@ -83,49 +168,21 @@ class AdWhacker {
                 // Content
                 const content = document.createElement('div');
                 content.className = 'ad-content';
-                content.innerHTML = `<b>WIN a FREE PRIZE!</b><br>Click below to claim.<br><span class='ad-fake-btn'>Click Here!</span>`;
+                content.innerHTML = `You have <span class='ad-bold'>1 message</span> waiting for you.<br><div class='ad-input-row'><input class='ad-fake-input' placeholder='Username'><span class='ad-fake-btn'>OK</span><span class='ad-fake-btn'>Cancel</span></div>`;
                 ad.appendChild(content);
                 return ad;
             },
-            // Yellow info bar, blue content, left close button
+            // 4. Classic pop-up with big red text and underline
             () => {
                 const ad = document.createElement('div');
                 ad.className = 'ad-popup';
-                ad.style.width = `${200 + Math.random() * 100}px`;
-                ad.style.height = `${110 + Math.random() * 60}px`;
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar gray';
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-button';
-                closeBtn.textContent = 'X';
-                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                const title = document.createElement('span');
-                title.className = 'ad-title';
-                title.textContent = 'Special Offer!';
-                titlebar.appendChild(title);
-                ad.appendChild(titlebar);
-
-                // Content
-                const content = document.createElement('div');
-                content.className = 'ad-content yellow';
-                content.innerHTML = `Upgrade now and save 70%!<br><span class='ad-fake-btn'>Upgrade</span>`;
-                ad.appendChild(content);
-                return ad;
-            },
-            // Green info bar, blue content, emoji icon
-            () => {
-                const ad = document.createElement('div');
-                ad.className = 'ad-popup';
-                ad.style.width = `${170 + Math.random() * 120}px`;
-                ad.style.height = `${100 + Math.random() * 70}px`;
+                ad.style.width = `${180 + Math.random() * 80}px`;
+                ad.style.height = `${100 + Math.random() * 60}px`;
 
                 // Title bar
                 const titlebar = document.createElement('div');
                 titlebar.className = 'ad-titlebar';
-                titlebar.innerHTML = `<span class='ad-icon'>💾</span><span class='ad-title'>Internet Explorer</span>`;
+                titlebar.innerHTML = `<span class='ad-icon'>⚠️</span><span class='ad-title'>Warning!</span>`;
                 const closeBtn = document.createElement('div');
                 closeBtn.className = 'close-button';
                 closeBtn.textContent = 'X';
@@ -135,33 +192,8 @@ class AdWhacker {
 
                 // Content
                 const content = document.createElement('div');
-                content.className = 'ad-content blue';
-                content.innerHTML = `You are the <b>1,000,000th</b> visitor!<br><span class='ad-fake-btn'>Claim Prize</span>`;
-                ad.appendChild(content);
-                return ad;
-            },
-            // Simple white with green border, big text
-            () => {
-                const ad = document.createElement('div');
-                ad.className = 'ad-popup';
-                ad.style.width = `${160 + Math.random() * 100}px`;
-                ad.style.height = `${90 + Math.random() * 60}px`;
-
-                // Title bar
-                const titlebar = document.createElement('div');
-                titlebar.className = 'ad-titlebar gray';
-                titlebar.innerHTML = `<span class='ad-title'>System Alert</span>`;
-                const closeBtn = document.createElement('div');
-                closeBtn.className = 'close-button';
-                closeBtn.textContent = 'X';
-                closeBtn.onclick = (e) => { e.stopPropagation(); this.closeAd(ad); };
-                titlebar.appendChild(closeBtn);
-                ad.appendChild(titlebar);
-
-                // Content
-                const content = document.createElement('div');
-                content.className = 'ad-content green';
-                content.innerHTML = `<b>Virus Detected!</b><br>Scan now.<br><span class='ad-fake-btn'>Scan</span>`;
+                content.className = 'ad-content';
+                content.innerHTML = `<span class='ad-underline' style='font-size:16px;'>Are You Paying Too Much?</span><br><span class='ad-small'>Rates are at historic lows!</span><br><span class='ad-fake-btn'>Get Quote</span>`;
                 ad.appendChild(content);
                 return ad;
             }
