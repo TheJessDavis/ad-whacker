@@ -623,6 +623,11 @@ class AdWhacker {
             // Play pop sound
             this.popSound.currentTime = 0; // Reset sound to start
             this.popSound.play().catch(e => console.log('Sound play failed:', e));
+            // Get ad position for star trail
+            const adRect = ad.getBoundingClientRect();
+            const gameRect = this.gameArea.getBoundingClientRect();
+            const adCenterX = adRect.left + adRect.width / 2 - gameRect.left;
+            const adCenterY = adRect.top + adRect.height / 2 - gameRect.top;
             // Use disappearAd for animation, then remove
             this.disappearAd(ad);
             // Combo logic
@@ -631,6 +636,7 @@ class AdWhacker {
             let window = this.getComboWindow(this.comboCount);
             // Buffering: if two ads blocked within 50ms, count as one
             if (elapsed < 50) return;
+            let comboContinues = false;
             if (!this.comboActive || elapsed > window) {
                 // Combo broken or first hit
                 if (this.comboActive && this.comboCount > 1) {
@@ -640,6 +646,7 @@ class AdWhacker {
                 this.comboActive = true;
             } else {
                 this.comboCount++;
+                comboContinues = true;
             }
             this.lastBlockTimestamp = now;
             // Multiplier only increases every 5 in a row
@@ -655,7 +662,54 @@ class AdWhacker {
             // Always show badge/floppy for clarity
             this.multiplierBadge.style.display = 'block';
             this.comboResetButton.style.display = 'block';
-            // TODO: Combo trail, screen shake, etc.
+            // Star trail effect
+            this.spawnStarTrail(adCenterX, adCenterY, comboContinues);
+        }
+    }
+
+    spawnStarTrail(x, y, comboContinues) {
+        const starCount = 7;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star-trail';
+            star.style.left = `${x + (Math.random() - 0.5) * 40}px`;
+            star.style.top = `${y + (Math.random() - 0.5) * 40}px`;
+            star.style.position = 'absolute';
+            star.style.zIndex = 2000;
+            star.style.pointerEvents = 'none';
+            star.innerHTML = '★';
+            this.gameArea.appendChild(star);
+            // Animate
+            if (comboContinues) {
+                // Animate toward badge
+                const badge = this.multiplierBadge;
+                const badgeRect = badge.getBoundingClientRect();
+                const gameRect = this.gameArea.getBoundingClientRect();
+                const badgeX = badgeRect.left + badgeRect.width / 2 - gameRect.left;
+                const badgeY = badgeRect.top + badgeRect.height / 2 - gameRect.top;
+                setTimeout(() => {
+                    star.style.transition = 'all 0.5s cubic-bezier(.7,-0.2,.7,1.5)';
+                    star.style.left = `${badgeX}px`;
+                    star.style.top = `${badgeY}px`;
+                    star.style.opacity = 0;
+                    star.style.transform = 'scale(1.8)';
+                }, 10);
+                setTimeout(() => {
+                    star.remove();
+                    // Flash badge when last star arrives
+                    if (i === starCount - 1) {
+                        this.multiplierBadge.classList.add('badge-flash');
+                        setTimeout(() => this.multiplierBadge.classList.remove('badge-flash'), 180);
+                    }
+                }, 520 + i * 20);
+            } else {
+                // Just fade out
+                setTimeout(() => {
+                    star.style.transition = 'opacity 0.4s';
+                    star.style.opacity = 0;
+                }, 10);
+                setTimeout(() => star.remove(), 410 + i * 10);
+            }
         }
     }
 

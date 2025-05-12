@@ -832,4 +832,22 @@ body {
     30%, 50%, 70% { transform: translateX(-8px); }
     40%, 60% { transform: translateX(8px); }
     100% { transform: translateX(0); }
+}
+
+.star-trail {
+    font-size: 18px;
+    color: #ffe066;
+    text-shadow: 0 0 6px #ff00de, 0 0 12px #00e6ff;
+    opacity: 1;
+    pointer-events: none;
+    transition: all 0.5s, opacity 0.4s;
+    will-change: left, top, opacity, transform;
+    user-select: none;
+}
+
+.badge-flash {
+    background: #fff !important;
+    color: #ff00de !important;
+    box-shadow: 0 0 32px #ffe066, 0 0 32px #00e6ff !important;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s !important;
 } 
